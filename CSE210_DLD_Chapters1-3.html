@@ -1,0 +1,2367 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSE 210: Digital Logic Design — المرشد الدراسي الشامل</title>
+<style>
+/* ═══════════════════════════════════════════════════
+   DESIGN TOKENS — Circuit-board aesthetic
+   Palette: deep navy bg, phosphor-green accents,
+   amber for gates, cyan for wires, crimson for highlights
+═══════════════════════════════════════════════════ */
+:root {
+  --bg-void:       #0a0e1a;
+  --bg-base:       #0d1220;
+  --bg-panel:      #111827;
+  --bg-card:       #161f30;
+  --bg-hover:      #1e2d45;
+  --bg-active:     #1a3a5c;
+
+  --wire-cyan:     #00e5ff;
+  --wire-green:    #39ff14;
+  --gate-amber:    #ffb300;
+  --gate-orange:   #ff6f00;
+  --accent-violet: #9c27b0;
+  --accent-pink:   #f72585;
+  --text-primary:  #e8edf5;
+  --text-muted:    #7b8fa8;
+  --text-dim:      #4a5a70;
+  --border:        #1e3050;
+  --border-bright: #2a4a72;
+
+  --kmap-red:      rgba(255, 80, 80, 0.25);
+  --kmap-blue:     rgba(0, 180, 255, 0.25);
+  --kmap-green:    rgba(0, 255, 120, 0.25);
+  --kmap-yellow:   rgba(255, 220, 0, 0.25);
+
+  --sidebar-w:     280px;
+  --radius:        8px;
+  --radius-lg:     14px;
+  --font-mono:     'Courier New', Courier, monospace;
+  --font-body:     'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-arabic:   'Segoe UI', 'Arial Unicode MS', Tahoma, sans-serif;
+}
+
+/* ── RESET & BASE ─────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg-void);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  line-height: 1.7;
+  display: flex;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── SIDEBAR ──────────────────────────────────────── */
+#sidebar {
+  width: var(--sidebar-w);
+  background: var(--bg-panel);
+  border-left: 1px solid var(--border);
+  position: fixed;
+  top: 0; right: 0; bottom: 0;
+  overflow-y: auto;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -4px 0 30px rgba(0,0,0,0.5);
+}
+
+#sidebar::-webkit-scrollbar { width: 4px; }
+#sidebar::-webkit-scrollbar-track { background: transparent; }
+#sidebar::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 2px; }
+
+.sidebar-brand {
+  padding: 20px 16px 16px;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(135deg, #0d1220 0%, #1a2540 100%);
+}
+.sidebar-brand .course-code {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--wire-cyan);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.sidebar-brand h1 {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-top: 4px;
+  line-height: 1.4;
+}
+.sidebar-brand .batch-badge {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 2px 8px;
+  background: rgba(0,229,255,0.1);
+  border: 1px solid rgba(0,229,255,0.3);
+  border-radius: 20px;
+  font-size: 10px;
+  color: var(--wire-cyan);
+  letter-spacing: 1px;
+}
+
+.sidebar-section { padding: 12px 0; }
+.sidebar-section-title {
+  padding: 6px 16px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.nav-item {
+  display: block;
+  padding: 8px 16px;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 13px;
+  border-right: 3px solid transparent;
+  transition: all 0.15s ease;
+  cursor: pointer;
+  direction: rtl;
+}
+.nav-item:hover {
+  color: var(--text-primary);
+  background: var(--bg-hover);
+  border-right-color: var(--wire-cyan);
+}
+.nav-item.active {
+  color: var(--wire-cyan);
+  background: var(--bg-active);
+  border-right-color: var(--wire-cyan);
+}
+.nav-item .ch-num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--gate-amber);
+  margin-left: 6px;
+}
+
+/* ── MAIN CONTENT ─────────────────────────────────── */
+#main {
+  margin-right: var(--sidebar-w);
+  flex: 1;
+  max-width: calc(100vw - var(--sidebar-w));
+  padding: 0 0 80px 0;
+}
+
+/* ── PAGE HERO ────────────────────────────────────── */
+.page-hero {
+  background: linear-gradient(135deg, #0a0e1a 0%, #0d1f3c 50%, #0a1628 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 48px 48px 40px;
+  position: relative;
+  overflow: hidden;
+}
+.page-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+}
+.page-hero .hero-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--wire-cyan);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.page-hero h2 {
+  font-size: 32px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #e8edf5 30%, var(--wire-cyan) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.2;
+  margin-bottom: 12px;
+}
+.page-hero p {
+  color: var(--text-muted);
+  max-width: 600px;
+  font-size: 15px;
+  direction: rtl;
+}
+
+/* ── CHAPTER SECTIONS ─────────────────────────────── */
+.chapter {
+  padding: 0;
+  border-bottom: 1px solid var(--border);
+}
+.chapter-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 28px 48px 24px;
+  background: var(--bg-base);
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  user-select: none;
+  direction: rtl;
+}
+.chapter-header:hover { background: var(--bg-hover); }
+.chapter-num {
+  width: 52px; height: 52px;
+  background: linear-gradient(135deg, var(--bg-active), #0a2040);
+  border: 1px solid var(--wire-cyan);
+  border-radius: var(--radius);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--wire-cyan);
+  flex-shrink: 0;
+  box-shadow: 0 0 15px rgba(0,229,255,0.15);
+}
+.chapter-meta { flex: 1; direction: rtl; }
+.chapter-meta h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+.chapter-meta p {
+  font-size: 13px;
+  color: var(--text-muted);
+  direction: rtl;
+}
+.chapter-toggle {
+  color: var(--text-dim);
+  font-size: 20px;
+  transition: transform 0.3s;
+  flex-shrink: 0;
+}
+.chapter.open .chapter-toggle { transform: rotate(90deg); }
+
+.chapter-body { padding: 0 48px 32px; display: none; }
+.chapter.open .chapter-body { display: block; }
+
+/* ── DETAILS / TOPIC BLOCKS ───────────────────────── */
+details {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  margin: 16px 0;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+details[open] { border-color: var(--border-bright); }
+details[open] summary { border-bottom: 1px solid var(--border); }
+
+summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--text-primary);
+  list-style: none;
+  direction: rtl;
+  user-select: none;
+}
+summary::-webkit-details-marker { display: none; }
+summary::before {
+  content: '▶';
+  font-size: 10px;
+  color: var(--wire-cyan);
+  transition: transform 0.25s;
+  flex-shrink: 0;
+  order: 1;
+}
+details[open] summary::before { transform: rotate(90deg); }
+summary .topic-icon {
+  width: 28px; height: 28px;
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.details-body { padding: 20px 24px 24px; direction: rtl; }
+
+/* ── TYPOGRAPHY ───────────────────────────────────── */
+h3 {
+  font-size: 17px; font-weight: 700;
+  color: var(--wire-cyan);
+  margin: 20px 0 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+  direction: rtl;
+}
+h4 {
+  font-size: 14px; font-weight: 600;
+  color: var(--gate-amber);
+  margin: 14px 0 8px;
+  direction: rtl;
+}
+p { margin-bottom: 12px; font-size: 14px; direction: rtl; }
+ul, ol { padding-right: 20px; margin-bottom: 12px; direction: rtl; }
+li { margin-bottom: 6px; font-size: 14px; }
+
+/* ── CALLOUT BOXES ────────────────────────────────── */
+.callout {
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  margin: 14px 0;
+  font-size: 14px;
+  border-right: 4px solid;
+  direction: rtl;
+}
+.callout.def {
+  background: rgba(0,229,255,0.06);
+  border-color: var(--wire-cyan);
+}
+.callout.theorem {
+  background: rgba(57,255,20,0.06);
+  border-color: var(--wire-green);
+}
+.callout.example {
+  background: rgba(255,179,0,0.06);
+  border-color: var(--gate-amber);
+}
+.callout.warning {
+  background: rgba(247,37,133,0.06);
+  border-color: var(--accent-pink);
+}
+.callout .callout-title {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  font-weight: 700;
+}
+.callout.def .callout-title    { color: var(--wire-cyan); }
+.callout.theorem .callout-title { color: var(--wire-green); }
+.callout.example .callout-title { color: var(--gate-amber); }
+.callout.warning .callout-title { color: var(--accent-pink); }
+
+/* ── MATH / CODE ──────────────────────────────────── */
+.math {
+  font-family: var(--font-mono);
+  background: rgba(0,0,0,0.4);
+  border: 1px solid var(--border-bright);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 12px 0;
+  font-size: 14px;
+  color: var(--wire-green);
+  direction: ltr;
+  text-align: left;
+  overflow-x: auto;
+  white-space: pre;
+}
+code {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  background: rgba(0,0,0,0.3);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--wire-green);
+  direction: ltr;
+}
+
+/* ── TRUTH TABLES ─────────────────────────────────── */
+.tt-wrap { overflow-x: auto; margin: 16px 0; }
+table.truth-table {
+  border-collapse: collapse;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  min-width: 100%;
+  direction: ltr;
+}
+table.truth-table th {
+  background: var(--bg-active);
+  color: var(--wire-cyan);
+  padding: 10px 18px;
+  border: 1px solid var(--border-bright);
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-align: center;
+  white-space: nowrap;
+}
+table.truth-table td {
+  padding: 8px 18px;
+  border: 1px solid var(--border);
+  text-align: center;
+  color: var(--text-primary);
+  transition: background 0.1s;
+}
+table.truth-table tr:hover td { background: var(--bg-hover); }
+table.truth-table td.one  { color: var(--wire-green); font-weight: 700; }
+table.truth-table td.zero { color: var(--text-dim); }
+table.truth-table td.out  { color: var(--gate-amber); font-weight: 700; background: rgba(255,179,0,0.05); }
+
+/* ── K-MAP TABLES ─────────────────────────────────── */
+.kmap-wrap { overflow-x: auto; margin: 16px 0; }
+table.kmap {
+  border-collapse: collapse;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  direction: ltr;
+}
+table.kmap th {
+  background: var(--bg-active);
+  color: var(--wire-cyan);
+  padding: 10px 22px;
+  border: 2px solid var(--border-bright);
+  text-align: center;
+}
+table.kmap td {
+  padding: 12px 22px;
+  border: 2px solid var(--border-bright);
+  text-align: center;
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--text-primary);
+  cursor: default;
+  position: relative;
+  min-width: 54px;
+  min-height: 54px;
+}
+table.kmap td.k0 { color: var(--text-dim); }
+table.kmap td.k1 { color: var(--wire-green); }
+table.kmap td.kX { color: var(--gate-amber); }
+table.kmap td.g-red    { background: var(--kmap-red);    box-shadow: inset 0 0 0 3px rgba(255,80,80,0.5); }
+table.kmap td.g-blue   { background: var(--kmap-blue);   box-shadow: inset 0 0 0 3px rgba(0,180,255,0.5); }
+table.kmap td.g-green  { background: var(--kmap-green);  box-shadow: inset 0 0 0 3px rgba(0,255,120,0.5); }
+table.kmap td.g-yellow { background: var(--kmap-yellow); box-shadow: inset 0 0 0 3px rgba(255,220,0,0.5); }
+
+/* ── SVG CIRCUIT STYLES ───────────────────────────── */
+.svg-wrap {
+  background: var(--bg-base);
+  border: 1px solid var(--border-bright);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  margin: 16px 0;
+  overflow-x: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+svg text {
+  font-family: var(--font-mono);
+  fill: var(--text-primary);
+}
+.wire { stroke: var(--wire-cyan); stroke-width: 2; fill: none; }
+.wire-secondary { stroke: #00a8c0; stroke-width: 1.5; fill: none; }
+.gate-body { fill: var(--bg-panel); stroke: var(--gate-amber); stroke-width: 2; }
+.gate-body-not { fill: var(--bg-panel); stroke: var(--accent-pink); stroke-width: 2; }
+.gate-body-xor { fill: var(--bg-panel); stroke: var(--wire-green); stroke-width: 2; }
+.bubble { fill: var(--bg-void); stroke: var(--accent-pink); stroke-width: 2; }
+.input-label { fill: var(--wire-cyan) !important; font-size: 13px; font-weight: bold; }
+.output-label { fill: var(--gate-amber) !important; font-size: 13px; font-weight: bold; }
+.gate-label { fill: var(--text-primary) !important; font-size: 12px; }
+.high-signal { stroke: var(--wire-green); }
+.low-signal  { stroke: var(--text-dim); }
+
+/* ── THEOREM GRID ─────────────────────────────────── */
+.theorem-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 12px 0;
+}
+@media (max-width: 700px) { .theorem-grid { grid-template-columns: 1fr; } }
+.theorem-item {
+  background: var(--bg-base);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+}
+.theorem-item .th-name {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+  direction: rtl;
+}
+.theorem-item .th-eq {
+  font-family: var(--font-mono);
+  color: var(--wire-green);
+  font-size: 13px;
+  direction: ltr;
+}
+
+/* ── SECTION DIVIDER ──────────────────────────────── */
+.section-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 24px 0 8px;
+}
+.section-divider span {
+  font-size: 12px;
+  font-family: var(--font-mono);
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.section-divider::before,
+.section-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ── SCROLLBAR ────────────────────────────────────── */
+#main::-webkit-scrollbar { width: 6px; }
+#main::-webkit-scrollbar-track { background: var(--bg-void); }
+#main::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 3px; }
+
+/* ── RESPONSIVE ───────────────────────────────────── */
+@media (max-width: 900px) {
+  :root { --sidebar-w: 240px; }
+  .chapter-header, .chapter-body, .page-hero { padding-left: 24px; padding-right: 24px; }
+}
+@media (max-width: 650px) {
+  #sidebar { display: none; }
+  #main { margin-right: 0; max-width: 100vw; }
+  .chapter-header, .chapter-body, .page-hero { padding-left: 16px; padding-right: 16px; }
+}
+
+/* ── PROGRESS BAR ─────────────────────────────────── */
+#reading-progress {
+  position: fixed;
+  top: 0; left: 0; right: var(--sidebar-w);
+  height: 2px;
+  background: linear-gradient(90deg, var(--wire-cyan), var(--wire-green));
+  transform-origin: left;
+  transform: scaleX(0);
+  z-index: 200;
+  transition: transform 0.1s linear;
+}
+
+/* ── SEARCH ───────────────────────────────────────── */
+.search-wrap {
+  padding: 12px 12px 8px;
+  border-bottom: 1px solid var(--border);
+}
+#search-input {
+  width: 100%;
+  background: var(--bg-card);
+  border: 1px solid var(--border-bright);
+  border-radius: 6px;
+  padding: 8px 12px;
+  color: var(--text-primary);
+  font-size: 13px;
+  outline: none;
+  direction: rtl;
+}
+#search-input:focus { border-color: var(--wire-cyan); }
+#search-input::placeholder { color: var(--text-dim); }
+
+/* ── CHIP BADGES ──────────────────────────────────── */
+.chip {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  margin: 2px;
+}
+.chip-cyan   { background: rgba(0,229,255,0.1); color: var(--wire-cyan); border: 1px solid rgba(0,229,255,0.3); }
+.chip-green  { background: rgba(57,255,20,0.1); color: var(--wire-green); border: 1px solid rgba(57,255,20,0.3); }
+.chip-amber  { background: rgba(255,179,0,0.1); color: var(--gate-amber); border: 1px solid rgba(255,179,0,0.3); }
+.chip-pink   { background: rgba(247,37,133,0.1); color: var(--accent-pink); border: 1px solid rgba(247,37,133,0.3); }
+</style>
+</head>
+<body>
+
+<!-- READING PROGRESS BAR -->
+<div id="reading-progress"></div>
+
+<!-- ═══════════════════ SIDEBAR ═══════════════════ -->
+<aside id="sidebar">
+  <div class="sidebar-brand">
+    <div class="course-code">CSE · 210</div>
+    <h1>Digital Logic Design<br>المنطق الرقمي</h1>
+    <span class="batch-badge">Batch 1: CH 1–3</span>
+  </div>
+
+  <div class="search-wrap">
+    <input id="search-input" type="text" placeholder="🔍 ابحث في المحتوى...">
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">الفصول</div>
+    <a class="nav-item" onclick="goChapter('ch1')">
+      <span class="ch-num">01</span> أنظمة العد والأكواد
+    </a>
+    <a class="nav-item" onclick="goChapter('ch2')">
+      <span class="ch-num">02</span> الجبر البوليني
+    </a>
+    <a class="nav-item" onclick="goChapter('ch3')">
+      <span class="ch-num">03</span> تبسيط الدوال البوليانية
+    </a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">الموضوعات السريعة</div>
+    <a class="nav-item" onclick="scrollTo('#number-systems')">أنظمة العد</a>
+    <a class="nav-item" onclick="scrollTo('#conversions')">التحويلات</a>
+    <a class="nav-item" onclick="scrollTo('#boolean-laws')">قوانين بول</a>
+    <a class="nav-item" onclick="scrollTo('#logic-gates')">البوابات المنطقية</a>
+    <a class="nav-item" onclick="scrollTo('#sop-pos')">SOP & POS</a>
+    <a class="nav-item" onclick="scrollTo('#kmap-2var')">K-Map 2×2</a>
+    <a class="nav-item" onclick="scrollTo('#kmap-3var')">K-Map 3×4</a>
+    <a class="nav-item" onclick="scrollTo('#kmap-4var')">K-Map 4×4</a>
+  </div>
+</aside>
+
+<!-- ═══════════════════ MAIN ════════════════════════ -->
+<main id="main">
+
+  <!-- PAGE HERO -->
+  <div class="page-hero">
+    <div class="hero-eyebrow">CSE 210 · DIGITAL LOGIC DESIGN · الدليل الدراسي الشامل</div>
+    <h2>المرشد الدراسي الكامل<br>للمنطق الرقمي</h2>
+    <p>دليل شامل وتفاعلي يغطي كل مفهوم، قانون، دائرة، وخريطة كارنو في مقرر CSE 210 — مع شرح عربي مفصل ورسوم SVG احترافية.</p>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       CHAPTER 1: Number Systems & Codes
+  ════════════════════════════════════════════════ -->
+  <div class="chapter" id="ch1">
+    <div class="chapter-header" onclick="toggleChapter('ch1')">
+      <div class="chapter-num">01</div>
+      <div class="chapter-meta">
+        <h2>Number Systems & Codes — أنظمة العد والأكواد</h2>
+        <p>الأنظمة الثنائية، الثُمانية، الست عشرية، وأكواد BCD وGray</p>
+      </div>
+      <div class="chapter-toggle">▶</div>
+    </div>
+    <div class="chapter-body">
+
+      <!-- 1.1 Number Systems -->
+      <details id="number-systems" open>
+        <summary>
+          <span class="topic-icon" style="background:rgba(0,229,255,0.1)">🔢</span>
+          1.1 — أنظمة العد (Number Systems)
+        </summary>
+        <div class="details-body">
+
+          <div class="callout def">
+            <div class="callout-title">تعريف — Definition</div>
+            <p>نظام العد (Number System) هو مجموعة من الرموز والقواعد المستخدمة لتمثيل الأعداد. في الإلكترونيات الرقمية نستخدم أربعة أنظمة رئيسية.</p>
+          </div>
+
+          <h3>الأنظمة الأربعة الرئيسية</h3>
+
+          <div class="theorem-grid">
+            <div class="theorem-item">
+              <div class="th-name">النظام العشري — Decimal</div>
+              <div class="th-eq">Base = 10 &nbsp;|&nbsp; Digits: 0–9</div>
+            </div>
+            <div class="theorem-item">
+              <div class="th-name">النظام الثنائي — Binary</div>
+              <div class="th-eq">Base = 2 &nbsp;&nbsp;|&nbsp; Digits: 0, 1</div>
+            </div>
+            <div class="theorem-item">
+              <div class="th-name">النظام الثُماني — Octal</div>
+              <div class="th-eq">Base = 8 &nbsp;&nbsp;|&nbsp; Digits: 0–7</div>
+            </div>
+            <div class="theorem-item">
+              <div class="th-name">النظام السادس عشري — Hex</div>
+              <div class="th-eq">Base = 16 &nbsp;|&nbsp; 0–9, A–F</div>
+            </div>
+          </div>
+
+          <h3>قيمة المواضع — Positional Value (الوزن)</h3>
+          <p>كل رقم في موضع معين له قيمة (وزن) تساوي أساس النظام مرفوعاً لأسّ موضعه:</p>
+          <div class="math">القيمة = Σ (رقم × base^موضع)
+
+مثال ثنائي: (1011)₂
+= 1×2³ + 0×2² + 1×2¹ + 1×2⁰
+= 8  +  0  +  2  +  1
+= 11 عشري</div>
+
+          <h4>جدول قيم القوى الثنائية</h4>
+          <div class="tt-wrap">
+            <table class="truth-table">
+              <tr>
+                <th>2⁰</th><th>2¹</th><th>2²</th><th>2³</th>
+                <th>2⁴</th><th>2⁵</th><th>2⁶</th><th>2⁷</th>
+              </tr>
+              <tr>
+                <td class="one">1</td><td class="one">2</td>
+                <td class="one">4</td><td class="one">8</td>
+                <td class="one">16</td><td class="one">32</td>
+                <td class="one">64</td><td class="one">128</td>
+              </tr>
+            </table>
+          </div>
+
+          <h4>جدول تكافؤ الأنظمة الأربعة</h4>
+          <div class="tt-wrap">
+            <table class="truth-table">
+              <tr>
+                <th>Decimal</th><th>Binary</th><th>Octal</th><th>Hex</th>
+              </tr>
+              <tr><td>0</td><td>0000</td><td>0</td><td>0</td></tr>
+              <tr><td>1</td><td>0001</td><td>1</td><td>1</td></tr>
+              <tr><td>2</td><td>0010</td><td>2</td><td>2</td></tr>
+              <tr><td>3</td><td>0011</td><td>3</td><td>3</td></tr>
+              <tr><td>4</td><td>0100</td><td>4</td><td>4</td></tr>
+              <tr><td>5</td><td>0101</td><td>5</td><td>5</td></tr>
+              <tr><td>6</td><td>0110</td><td>6</td><td>6</td></tr>
+              <tr><td>7</td><td>0111</td><td>7</td><td>7</td></tr>
+              <tr><td>8</td><td>1000</td><td>10</td><td>8</td></tr>
+              <tr><td>9</td><td>1001</td><td>11</td><td>9</td></tr>
+              <tr><td>10</td><td>1010</td><td>12</td><td>A</td></tr>
+              <tr><td>11</td><td>1011</td><td>13</td><td>B</td></tr>
+              <tr><td>12</td><td>1100</td><td>14</td><td>C</td></tr>
+              <tr><td>13</td><td>1101</td><td>15</td><td>D</td></tr>
+              <tr><td>14</td><td>1110</td><td>16</td><td>E</td></tr>
+              <tr><td>15</td><td>1111</td><td>17</td><td>F</td></tr>
+            </table>
+          </div>
+        </div>
+      </details>
+
+      <!-- 1.2 Conversions -->
+      <details id="conversions">
+        <summary>
+          <span class="topic-icon" style="background:rgba(255,179,0,0.1)">🔄</span>
+          1.2 — التحويل بين الأنظمة (Base Conversions)
+        </summary>
+        <div class="details-body">
+
+          <h3>أولاً: من أي أساس إلى العشري</h3>
+          <p>الطريقة: اجمع (رقم × قيمة الموضع) لكل خانة.</p>
+          <div class="callout example">
+            <div class="callout-title">مثال ثنائي → عشري</div>
+            <div class="math">(110101)₂ → ?
+= 1×32 + 1×16 + 0×8 + 1×4 + 0×2 + 1×1
+= 32 + 16 + 0 + 4 + 0 + 1 = 53</div>
+          </div>
+          <div class="callout example">
+            <div class="callout-title">مثال سادس عشري → عشري</div>
+            <div class="math">(2AF)₁₆ → ?
+= 2×256 + A(10)×16 + F(15)×1
+= 512 + 160 + 15 = 687</div>
+          </div>
+
+          <h3>ثانياً: من العشري إلى الثنائي — القسمة التتابعية</h3>
+          <p>قسّم العدد على 2 باستمرار، واحتفظ بالباقي — اقرأ الباقيات من الأسفل إلى الأعلى.</p>
+          <div class="callout example">
+            <div class="callout-title">مثال: 25 → ثنائي</div>
+            <div class="math">25 ÷ 2 = 12  باقي 1  ← LSB
+12 ÷ 2 =  6  باقي 0
+ 6 ÷ 2 =  3  باقي 0
+ 3 ÷ 2 =  1  باقي 1
+ 1 ÷ 2 =  0  باقي 1  ← MSB
+
+نتيجة: (25)₁₀ = (11001)₂</div>
+          </div>
+
+          <h3>ثالثاً: ثنائي ↔ ثُماني (مجموعات من 3)</h3>
+          <p>كل 3 بتات ثنائية تقابل رقمًا ثمانيًا واحدًا. تجمّع من اليمين (LSB) وتكمل بأصفار على اليسار إذا لزم.</p>
+          <div class="callout example">
+            <div class="callout-title">مثال: (110 101 011)₂ → ثماني</div>
+            <div class="math">110  101  011
+ 6    5    3
+→ (653)₈</div>
+          </div>
+
+          <h3>رابعاً: ثنائي ↔ سادس عشري (مجموعات من 4)</h3>
+          <p>كل 4 بتات ثنائية تقابل رقمًا سادس عشريًا واحدًا.</p>
+          <div class="callout example">
+            <div class="callout-title">مثال: (1010 1111 0011)₂ → Hex</div>
+            <div class="math">1010  1111  0011
+  A     F     3
+→ (AF3)₁₆</div>
+          </div>
+
+          <h3>خامساً: الكسور الثنائية — Fractional Conversion</h3>
+          <p>للتحويل من العشري إلى ثنائي للكسور: اضرب في 2 وخذ الجزء الصحيح.</p>
+          <div class="callout example">
+            <div class="callout-title">مثال: 0.625 → ثنائي</div>
+            <div class="math">0.625 × 2 = 1.25 → bit = 1
+0.25  × 2 = 0.50 → bit = 0
+0.50  × 2 = 1.00 → bit = 1  (توقف)
+
+نتيجة: (0.625)₁₀ = (0.101)₂</div>
+          </div>
+
+        </div>
+      </details>
+
+      <!-- 1.3 Complement -->
+      <details>
+        <summary>
+          <span class="topic-icon" style="background:rgba(247,37,133,0.1)">±</span>
+          1.3 — تمثيل الأعداد السالبة (Complements)
+        </summary>
+        <div class="details-body">
+
+          <div class="callout def">
+            <div class="callout-title">لماذا المتمم؟</div>
+            <p>الحواسيب تنفذ عملية الطرح بالجمع! نحوّل العدد السالب إلى صيغة مكملة ثم نجمع. هذا أبسط دائريًا من بناء دائرة طرح منفصلة.</p>
+          </div>
+
+          <h3>1's Complement (المتمم الأول)</h3>
+          <p>اعكس كل بت: كل 0 يصبح 1 وكل 1 يصبح 0.</p>
+          <div class="math">مثال: (10110)₂
+1's Complement = (01001)₂
+
+القاعدة: flip all bits</div>
+
+          <h3>2's Complement (المتمم الثاني) — الأكثر استخدامًا</h3>
+          <p>خطوتان: (1) احسب 1's Complement، ثم (2) أضف 1.</p>
+          <div class="callout example">
+            <div class="callout-title">مثال: أوجد 2's Complement لـ (10110)₂</div>
+            <div class="math">العدد الأصلي:  1 0 1 1 0
+1's Complement: 0 1 0 0 1
+أضف 1:       + 0 0 0 0 1
+              ─────────────
+2's Complement: 0 1 0 1 0</div>
+          </div>
+
+          <h3>الطريقة السريعة للـ 2's Complement</h3>
+          <p>ابدأ من اليمين (LSB): انسخ الأصفار والأول واحد، ثم اعكس ما تبقى.</p>
+          <div class="callout example">
+            <div class="callout-title">مثال سريع: (10110100)₂</div>
+            <div class="math">10110100
+        ↑ أول واحد وما بعده → انسخ كما هو: ...100
+ما قبله → اعكس: 10110... → 01001...
+
+النتيجة: 01001100</div>
+          </div>
+
+          <h3>الطرح بالـ 2's Complement</h3>
+          <div class="callout example">
+            <div class="callout-title">مثال: 7 - 3 = 4 باستخدام 4 بتات</div>
+            <div class="math">7  = 0111
+3  = 0011  →  2's Complement = 1101
+
+  0111
++ 1101
+──────
+ 10100  → تجاهل bit الحمل الزائد → 0100 = 4 ✓</div>
+          </div>
+
+          <h3>نطاق التمثيل بالـ 2's Complement</h3>
+          <div class="tt-wrap">
+            <table class="truth-table">
+              <tr><th>عدد البتات n</th><th>أصغر قيمة</th><th>أكبر قيمة</th><th>النطاق</th></tr>
+              <tr><td>4</td><td>-8</td><td>+7</td><td>-8 إلى +7</td></tr>
+              <tr><td>8</td><td>-128</td><td>+127</td><td>-128 إلى +127</td></tr>
+              <tr><td>16</td><td>-32768</td><td>+32767</td><td>-32K إلى +32K</td></tr>
+              <tr><td>n</td><td>-2^(n-1)</td><td>2^(n-1)-1</td><td>2^n قيمة</td></tr>
+            </table>
+          </div>
+
+        </div>
+      </details>
+
+      <!-- 1.4 Binary Arithmetic -->
+      <details>
+        <summary>
+          <span class="topic-icon" style="background:rgba(57,255,20,0.1)">➕</span>
+          1.4 — الحساب الثنائي (Binary Arithmetic)
+        </summary>
+        <div class="details-body">
+
+          <h3>جدول الجمع الثنائي الأساسي</h3>
+          <div class="tt-wrap">
+            <table class="truth-table">
+              <tr><th>A + B</th><th>Sum</th><th>Carry</th></tr>
+              <tr><td>0 + 0</td><td class="zero">0</td><td class="zero">0</td></tr>
+              <tr><td>0 + 1</td><td class="one">1</td><td class="zero">0</td></tr>
+              <tr><td>1 + 0</td><td class="one">1</td><td class="zero">0</td></tr>
+              <tr><td>1 + 1</td><td class="zero">0</td><td class="one">1 (carry)</td></tr>
+            </table>
+          </div>
+
+          <div class="callout example">
+            <div class="callout-title">مثال جمع: (1011)₂ + (1101)₂</div>
+            <div class="math">  1011
++ 1101
+──────
+ 11000  →  (24)₁₀ تحقق: 11+13=24 ✓</div>
+          </div>
+
+          <h3>الضرب الثنائي</h3>
+          <p>مثل الضرب العشري تمامًا — ضرب جزئي (0 أو 1) ثم إزاحة ثم جمع.</p>
+          <div class="callout example">
+            <div class="callout-title">مثال: (1011)₂ × (101)₂ = (55)₁₀</div>
+            <div class="math">    1011
+  ×  101
+  ──────
+    1011   (1011 × 1)
+   0000    (1011 × 0, إزاحة 1)
+  1011     (1011 × 1, إزاحة 2)
+  ──────
+  110111   = 55</div>
+          </div>
+
+        </div>
+      </details>
+
+      <!-- 1.5 Codes -->
+      <details>
+        <summary>
+          <span class="topic-icon" style="background:rgba(156,33,176,0.1)">📟</span>
+          1.5 — الأكواد الرقمية (Digital Codes)
+        </summary>
+        <div class="details-body">
+
+          <h3>BCD — Binary Coded Decimal</h3>
+          <div class="callout def">
+            <div class="callout-title">تعريف</div>
+            <p>BCD هو كود يمثّل كل رقم عشري (0–9) بأربعة بتات ثنائية مستقلة. إنه ليس تحويلًا للعدد كاملًا — كل خانة عشرية تُحوَّل على حدة.</p>
+          </div>
+          <div class="callout example">
+            <div class="callout-title">مثال BCD</div>
+            <div class="math">(395)₁₀ → BCD:
+  3   →  0011
+  9   →  1001
+  5   →  0101
+BCD = 0011 1001 0101
+
+ملاحظة: أكواد 1010 إلى 1111 غير مستخدمة في BCD (Forbidden Codes)</div>
+          </div>
+
+          <h3>جمع BCD</h3>
+          <p>إذا كان ناتج جمع خانتين > 9 أو ظهر حمل، أضف 0110 (6) للتصحيح.</p>
+          <div class="callout example">
+            <div class="callout-title">مثال: 5 + 8 = 13 في BCD</div>
+            <div class="math">  0101  (5)
++ 1000  (8)
+──────
+  1101  = 13 عشريًا ← أكبر من 9!
++ 0110  ← أضف 6 للتصحيح
+──────
+ 10011  → BCD صحيح: 0001 0011 = 13</div>
+          </div>
+
+          <h3>Gray Code — كود جراي</h3>
+          <div class="callout def">
+            <div class="callout-title">تعريف — Reflected Binary Code</div>
+            <p>كود جراي هو كود يتغير فيه بت واحد فقط بين أي رقمين متتاليين. هذا يقلل من أخطاء الانتقال (transition errors) ويُستخدم في محركات زوايا (encoders) وخرائط كارنو.</p>
+          </div>
+
+          <h4>تحويل Binary → Gray</h4>
+          <div class="math">MSB يبقى كما هو.
+كل بت بعده = XOR(البت الحالي في binary, البت السابق في binary)
+
+مثال: Binary 1011 → Gray
+  B: 1  0  1  1
+  G: 1  1  1  0
+     ↑  ↑  ↑  ↑
+     1  1⊕0=1  0⊕1=1  1⊕1=0</div>
+
+          <h4>تحويل Gray → Binary</h4>
+          <div class="math">MSB يبقى كما هو.
+كل بت بعده = XOR(البت السابق في binary, البت الحالي في gray)
+
+مثال: Gray 1101 → Binary
+  G: 1  1  0  1
+  B: 1  0  0  1
+     ↑  ↑  ↑  ↑
+     1  1⊕1=0  0⊕0=0  0⊕1=1</div>
+
+          <h4>جدول الـ 4-Bit Gray Code</h4>
+          <div class="tt-wrap">
+            <table class="truth-table">
+              <tr><th>Decimal</th><th>Binary</th><th>Gray</th></tr>
+              <tr><td>0</td><td>0000</td><td>0000</td></tr>
+              <tr><td>1</td><td>0001</td><td>0001</td></tr>
+              <tr><td>2</td><td>0010</td><td>0011</td></tr>
+              <tr><td>3</td><td>0011</td><td>0010</td></tr>
+              <tr><td>4</td><td>0100</td><td>0110</td></tr>
+              <tr><td>5</td><td>0101</td><td>0111</td></tr>
+              <tr><td>6</td><td>0110</td><td>0101</td></tr>
+              <tr><td>7</td><td>0111</td><td>0100</td></tr>
+              <tr><td>8</td><td>1000</td><td>1100</td></tr>
+              <tr><td>9</td><td>1001</td><td>1101</td></tr>
+              <tr><td>10</td><td>1010</td><td>1111</td></tr>
+              <tr><td>11</td><td>1011</td><td>1110</td></tr>
+              <tr><td>12</td><td>1100</td><td>1010</td></tr>
+              <tr><td>13</td><td>1101</td><td>1011</td></tr>
+              <tr><td>14</td><td>1110</td><td>1001</td></tr>
+              <tr><td>15</td><td>1111</td><td>1000</td></tr>
+            </table>
+          </div>
+
+          <h3>ASCII Code</h3>
+          <div class="callout def">
+            <div class="callout-title">تعريف</div>
+            <p>ASCII (American Standard Code for Information Interchange) — كود 7 بت (128 رمزًا) يُمثّل الحروف والأرقام والرموز. الحروف الكبيرة تبدأ من 65 (0x41)، الصغيرة من 97 (0x61)، الأرقام من 48 (0x30).</p>
+          </div>
+          <div class="math">A = 65 = 0100 0001
+a = 97 = 0110 0001
+0 = 48 = 0011 0000
+الفرق بين حرف كبير وصغيره = 32 (bit #5)</div>
+
+          <h3>Error Detection — Parity Bit</h3>
+          <div class="callout def">
+            <div class="callout-title">تعريف</div>
+            <p>بت التكافؤ (Parity Bit) هو بت إضافي يُضاف للبيانات للكشف عن أخطاء النقل ببت واحد.</p>
+          </div>
+          <ul>
+            <li><strong>Even Parity:</strong> يجعل المجموع الكلي لـ 1s في الكلمة عددًا زوجيًا.</li>
+            <li><strong>Odd Parity:</strong> يجعل المجموع الكلي لـ 1s في الكلمة عددًا فرديًا.</li>
+          </ul>
+          <div class="callout example">
+            <div class="callout-title">مثال Even Parity</div>
+            <div class="math">البيانات: 1011001 (عدد 1s = 4, زوجي ✓)
+Parity bit = 0 (لإبقاء العدد زوجيًا)
+الكلمة المُرسَلة: 0 1011001</div>
+          </div>
+
+        </div>
+      </details>
+
+    </div>
+  </div><!-- end ch1 -->
+
+
+  <!-- ═══════════════════════════════════════════════
+       CHAPTER 2: Boolean Algebra & Logic Gates
+  ════════════════════════════════════════════════ -->
+  <div class="chapter" id="ch2">
+    <div class="chapter-header" onclick="toggleChapter('ch2')">
+      <div class="chapter-num">02</div>
+      <div class="chapter-meta">
+        <h2>Boolean Algebra & Logic Gates — الجبر البوليني والبوابات المنطقية</h2>
+        <p>القوانين الأساسية، نظريات دي مورغان، البوابات الأساسية والمشتقة</p>
+      </div>
+      <div class="chapter-toggle">▶</div>
+    </div>
+    <div class="chapter-body">
+
+      <!-- 2.1 Boolean Basics -->
+      <details id="boolean-laws" open>
+        <summary>
+          <span class="topic-icon" style="background:rgba(57,255,20,0.1)">∧</span>
+          2.1 — أساسيات الجبر البوليني (Boolean Fundamentals)
+        </summary>
+        <div class="details-body">
+
+          <div class="callout def">
+            <div class="callout-title">تعريف</div>
+            <p>الجبر البوليني (Boolean Algebra) هو نظام جبري يعمل على قيمتين فقط: 0 و1 (خطأ وصواب، منخفض وعالٍ). طوّره <strong>George Boole</strong> عام 1854، وطبّقه <strong>Claude Shannon</strong> على الدوائر الإلكترونية.</p>
+          </div>
+
+          <h3>العمليات الأساسية الثلاث</h3>
+          <div class="theorem-grid">
+            <div class="theorem-item">
+              <div class="th-name">AND — الضرب المنطقي</div>
+              <div class="th-eq">A · B &nbsp;أو&nbsp; AB</div>
+            </div>
+            <div class="theorem-item">
+              <div class="th-name">OR — الجمع المنطقي</div>
+              <div class="th-eq">A + B</div>
+            </div>
+            <div class="theorem-item">
+              <div class="th-name">NOT — النفي / القلب</div>
+              <div class="th-eq">A' &nbsp;أو&nbsp; Ā &nbsp;أو&nbsp; ¬A</div>
+            </div>
+          </div>
+
+          <h3>القوانين الأساسية — Basic Laws</h3>
+          <div class="theorem-grid">
+            <div class="theorem-item">
+              <div class="th-name">Commutative — التبادلية</div>
+              <div class="th-eq">A+B = B+A &nbsp;|&nbsp; A·B = B·A</div>
+            </div>
+            <div class="theorem-item">
+              <div class="th-name">Associative — التجميعية</div>
+              <div class="th-eq">(A+B)+C = A+(B+C)</div>
+            </div>
+            <div class="theorem-item">
+              <div class="th-name">Distributive — التوزيعية</div>
+              <div class="th-eq">A(B+C) = AB + AC</div>
+            </div>
+            <div class="theorem-item">
+              <div class="th-name">Double Negation — النفي المزدوج</div>
+              <div class="th-eq">(A')' = A</div>
+            </div>
+          </div>
+
+          <h3>قوانين الهوية — Identity Laws</h3>
+          <div class="theorem-grid">
+            <div class="theorem-item"><div class="th-name">AND مع 0</div><div class="th-eq">A · 0 = 0</div></div>
+            <div class="theorem-item"><div class="th-name">AND مع 1</div><div class="th-eq">A · 1 = A</div></div>
+            <div class="theorem-item"><div class="th-name">OR مع 0</div><div class="th-eq">A + 0 = A</div></div>
+            <div class="theorem-item"><div class="th-name">OR مع 1</div><div class="th-eq">A + 1 = 1</div></div>
+            <div class="theorem-item"><div class="th-name">Idempotent AND</div><div class="th-eq">A · A = A</div></div>
+            <div class="theorem-item"><div class="th-name">Idempotent OR</div><div class="th-eq">A + A = A</div></div>
+            <div class="theorem-item"><div class="th-name">Complement AND</div><div class="th-eq">A · A' = 0</div></div>
+            <div class="theorem-item"><div class="th-name">Complement OR</div><div class="th-eq">A + A' = 1</div></div>
+          </div>
+
+          <h3>نظريات الاستيعاب والدمج — Absorption & Consensus</h3>
+          <div class="theorem-grid">
+            <div class="theorem-item"><div class="th-name">Absorption 1</div><div class="th-eq">A + AB = A</div></div>
+            <div class="theorem-item"><div class="th-name">Absorption 2</div><div class="th-eq">A(A + B) = A</div></div>
+            <div class="theorem-item"><div class="th-name">Elimination</div><div class="th-eq">A + A'B = A + B</div></div>
+            <div class="theorem-item"><div class="th-name">Consensus</div><div class="th-eq">AB + A'C + BC = AB + A'C</div></div>
+          </div>
+
+          <h3>نظريات دي مورغان — De Morgan's Theorems ⭐</h3>
+          <div class="callout theorem">
+            <div class="callout-title">نظريات دي مورغان — الأهم في المنطق الرقمي</div>
+            <div class="math">النظرية الأولى:  (A · B)' = A' + B'
+ NAND → يساوي → OR لمدخلاتٍ مكمَّلة
+
+النظرية الثانية: (A + B)' = A' · B'
+ NOR  → يساوي → AND لمدخلاتٍ مكمَّلة</div>
+            <p style="margin-top:10px">
+              <strong>قاعدة سهلة:</strong> لتطبيق دي مورغان — <em>اعكس العملية (AND→OR أو OR→AND) وأكمِل كل متغير على حدة</em>.
+            </p>
+          </div>
+
+          <div class="callout example">
+            <div class="callout-title">مثال: تبسيط باستخدام دي مورغان</div>
+            <div class="math">بسّط: F = (AB + C)'
+
+الخطوة 1: طبّق دي مورغان الأولى:
+  F = (AB)' · C'
+
+الخطوة 2: طبّق دي مورغان على (AB)':
+  F = (A' + B') · C'
+
+الخطوة 3: وزّع:
+  F = A'C' + B'C'</div>
+          </div>
+
+        </div>
+      </details>
+
+      <!-- 2.2 Logic Gates -->
+      <details id="logic-gates">
+        <summary>
+          <span class="topic-icon" style="background:rgba(255,179,0,0.1)">⚡</span>
+          2.2 — البوابات المنطقية (Logic Gates)
+        </summary>
+        <div class="details-body">
+
+          <div class="callout def">
+            <div class="callout-title">تعريف</div>
+            <p>البوابة المنطقية (Logic Gate) هي دائرة إلكترونية تُنفّذ عملية منطقية بوليانية واحدة. تُصنع من الترانزستورات وتعمل بسرعة نانو-ثانية.</p>
+          </div>
+
+          <h3>بوابة AND</h3>
+          <p>الخرج = 1 فقط إذا كانت <strong>جميع</strong> المداخل = 1.</p>
+          <!-- AND Gate SVG -->
+          <div class="svg-wrap">
+            <svg viewBox="0 0 320 140" width="320" height="140" xmlns="http://www.w3.org/2000/svg">
+              <!-- Input wires -->
+              <line x1="20" y1="50" x2="100" y2="50" class="wire"/>
+              <line x1="20" y1="90" x2="100" y2="90" class="wire"/>
+              <!-- AND gate body -->
+              <path d="M100,30 L100,110 L145,110 Q185,110 185,70 Q185,30 145,30 Z" class="gate-body"/>
+              <!-- Output wire -->
+              <line x1="185" y1="70" x2="300" y2="70" class="wire"/>
+              <!-- Labels -->
+              <text x="10" y="54" class="input-label">A</text>
+              <text x="10" y="94" class="input-label">B</text>
+              <text x="285" y="65" class="output-label">F</text>
+              <text x="127" y="75" class="gate-label">AND</text>
+            </svg>
+          </div>
+          <div class="tt-wrap">
+            <table class="truth-table">
+              <tr><th>A</th><th>B</th><th>F = A·B</th></tr>
+              <tr><td class="zero">0</td><td class="zero">0</td><td class="out zero">0</td></tr>
+              <tr><td class="zero">0</td><td class="one">1</td><td class="out zero">0</td></tr>
+              <tr><td class="one">1</td><td class="zero">0</td><td class="out zero">0</td></tr>
+              <tr><td class="one">1</td><td class="one">1</td><td class="out one">1</td></tr>
+            </table>
+          </div>
+
+          <h3>بوابة OR</h3>
+          <p>الخرج = 1 إذا كان <strong>أي</strong> مدخل = 1.</p>
+          <!-- OR Gate SVG -->
+          <div class="svg-wrap">
+            <svg viewBox="0 0 320 140" width="320" height="140" xmlns="http://www.w3.org/2000/svg">
+              <line x1="20" y1="50" x2="100" y2="50" class="wire"/>
+              <line x1="20" y1="90" x2="100" y2="90" class="wire"/>
+              <!-- OR gate: curved body -->
+              <path d="M100,30 Q120,70 100,110 L145,110 Q195,110 195,70 Q195,30 145,30 Z" class="gate-body" style="stroke: var(--wire-green)"/>
+              <path d="M100,30 Q115,70 100,110" class="gate-body" style="stroke:var(--wire-green); fill:none"/>
+              <line x1="195" y1="70" x2="300" y2="70" class="wire"/>
+              <text x="10" y="54" class="input-label">A</text>
+              <text x="10" y="94" class="input-label">B</text>
+              <text x="285" y="65" class="output-label">F</text>
+              <text x="130" y="75" class="gate-label">OR</text>
+            </svg>
+          </div>
+          <div class="tt-wrap">
+            <table class="truth-table">
+              <tr><th>A</th><th>B</th><th>F = A+B</th></tr>
+              <tr><td class="zero">0</td><td class="zero">0</td><td class="out zero">0</td></tr>
+              <tr><td class="zero">0</td><td class="one">1</td><td class="out one">1</td></tr>
+              <tr><td class="one">1</td><td class="zero">0</td><td class="out one">1</td></tr>
+              <tr><td class="one">1</td><td class="one">1</td><td class="out one">1</td></tr>
+            </table>
+          </div>
+
+          <h3>بوابة NOT (Inverter)</h3>
+          <p>الخرج دائمًا عكس المدخل — بوابة بمدخل واحد.</p>
+          <!-- NOT Gate SVG -->
+          <div class="svg-wrap">
+            <svg viewBox="0 0 280 100" width="280" height="100" xmlns="http://www.w3.org/2000/svg">
+              <line x1="20" y1="50" x2="100" y2="50" class="wire"/>
+              <polygon points="100,20 100,80 160,50" class="gate-body-not"/>
+              <circle cx="168" cy="50" r="8" class="bubble"/>
+              <line x1="176" y1="50" x2="260" y2="50" class="wire"/>
+              <text x="10" y="45" class="input-label">A</text>
+              <text x="245" y="45" class="output-label">F</text>
+              <text x="122" y="55" class="gate-label">NOT</text>
+            </svg>
+          </div>
+          <div class="tt-wrap">
+            <table class="truth-table">
+              <tr><th>A</th><th>F = A'</th></tr>
+              <tr><td class="zero">0</td><td class="out one">1</td></tr>
+              <tr><td class="one">1</td><td class="out zero">0</td></tr>
+            </table>
+          </div>
+
+          <h3>بوابة NAND — Universal Gate ⭐</h3>
+          <p>NAND = AND + NOT. تُسمى <em>Universal Gate</em> لأنه يمكن تنفيذ أي دالة منطقية باستخدامها وحدها.</p>
+          <!-- NAND Gate SVG -->
+          <div class="svg-wrap">
+            <svg viewBox="0 0 340 140" width="340" height="140" xmlns="http://www.w3.org/2000/svg">
+              <line x1="20" y1="50" x2="100" y2="50" class="wire"/>
+              <line x1="20" y1="90" x2="100" y2="90" class="wire"/>
+              <path d="M100,30 L100,110 L145,110 Q185,110 185,70 Q185,30 145,30 Z" class="gate-body"/>
+              <circle cx="193" cy="70" r="8" class="bubble"/>
+              <line x1="201" y1="70" x2="320" y2="70" class="wire"/>
+              <text x="10" y="54" class="input-label">A</text>
+              <text x="10" y="94" class="input-label">B</text>
+              <text x="305" y="65" class="output-label">F</text>
+              <text x="120" y="75" class="gate-label">NAND</text>
+            </svg>
+          </div>
+          <div class="tt-wrap">
+            <table class="truth-table">
+              <tr><th>A</th><th>B</th><th>F = (AB)'</th></tr>
+              <tr><td class="zero">0</td><td class="zero">0</td><td class="out one">1</td></tr>
+              <tr><td class="zero">0</td><td class="one">1</td><td class="out one">1</td></tr>
+              <tr><td class="one">1</td><td class="zero">0</td><td class="out one">1</td></tr>
+              <tr><td class="one">1</td><td class="one">1</td><td class="out zero">0</td></tr>
+            </table>
+          </div>
+
+          <h3>بوابة NOR — Universal Gate ⭐</h3>
+          <p>NOR = OR + NOT. أيضًا بوابة عالمية.</p>
+          <!-- NOR Gate SVG -->
+          <div class="svg-wrap">
+            <svg viewBox="0 0 340 140" width="340" height="140" xmlns="http://www.w3.org/2000/svg">
+              <line x1="20" y1="50" x2="100" y2="50" class="wire"/>
+              <line x1="20" y1="90" x2="100" y2="90" class="wire"/>
+              <path d="M100,30 Q120,70 100,110 L145,110 Q195,110 195,70 Q195,30 145,30 Z" class="gate-body" style="stroke:var(--wire-green)"/>
+              <path d="M100,30 Q115,70 100,110" style="stroke:var(--wire-green);fill:none;stroke-width:2"/>
+              <circle cx="203" cy="70" r="8" class="bubble"/>
+              <line x1="211" y1="70" x2="320" y2="70" class="wire"/>
+              <text x="10" y="54" class="input-label">A</text>
+              <text x="10" y="94" class="input-label">B</text>
+              <text x="305" y="65" class="output-label">F</text>
+              <text x="133" y="75" class="gate-label">NOR</text>
+            </svg>
+          </div>
+          <div class="tt-wrap">
+            <table class="truth-table">
+              <tr><th>A</th><th>B</th><th>F = (A+B)'</th></tr>
+              <tr><td class="zero">0</td><td class="zero">0</td><td class="out one">1</td></tr>
+              <tr><td class="zero">0</td><td class="one">1</td><td class="out zero">0</td></tr>
+              <tr><td class="one">1</td><td class="zero">0</td><td class="out zero">0</td></tr>
+              <tr><td class="one">1</td><td class="one">1</td><td class="out zero">0</td></tr>
+            </table>
+          </div>
+
+          <h3>بوابة XOR — Exclusive OR</h3>
+          <p>الخرج = 1 إذا كانت المداخل <strong>مختلفة</strong>. F = A⊕B = A'B + AB'</p>
+          <!-- XOR Gate SVG -->
+          <div class="svg-wrap">
+            <svg viewBox="0 0 340 140" width="340" height="140" xmlns="http://www.w3.org/2000/svg">
+              <line x1="20" y1="50" x2="105" y2="50" class="wire"/>
+              <line x1="20" y1="90" x2="105" y2="90" class="wire"/>
+              <!-- XOR extra curve -->
+              <path d="M95,30 Q110,70 95,110" class="gate-body-xor" style="fill:none"/>
+              <path d="M105,30 Q125,70 105,110 L150,110 Q200,110 200,70 Q200,30 150,30 Z" class="gate-body-xor"/>
+              <path d="M105,30 Q120,70 105,110" class="gate-body-xor" style="fill:none"/>
+              <line x1="200" y1="70" x2="320" y2="70" class="wire"/>
+              <text x="10" y="54" class="input-label">A</text>
+              <text x="10" y="94" class="input-label">B</text>
+              <text x="305" y="65" class="output-label">F</text>
+              <text x="135" y="75" class="gate-label">XOR</text>
+            </svg>
+          </div>
+          <div class="tt-wrap">
+            <table class="truth-table">
+              <tr><th>A</th><th>B</th><th>F = A⊕B</th></tr>
+              <tr><td class="zero">0</td><td class="zero">0</td><td class="out zero">0</td></tr>
+              <tr><td class="zero">0</td><td class="one">1</td><td class="out one">1</td></tr>
+              <tr><td class="one">1</td><td class="zero">0</td><td class="out one">1</td></tr>
+              <tr><td class="one">1</td><td class="one">1</td><td class="out zero">0</td></tr>
+            </table>
+          </div>
+
+          <h3>بوابة XNOR — Exclusive NOR</h3>
+          <p>الخرج = 1 إذا كانت المداخل <strong>متساوية</strong>. F = (A⊕B)' = AB + A'B'</p>
+          <div class="tt-wrap">
+            <table class="truth-table">
+              <tr><th>A</th><th>B</th><th>F = (A⊕B)'</th></tr>
+              <tr><td class="zero">0</td><td class="zero">0</td><td class="out one">1</td></tr>
+              <tr><td class="zero">0</td><td class="one">1</td><td class="out zero">0</td></tr>
+              <tr><td class="one">1</td><td class="zero">0</td><td class="out zero">0</td></tr>
+              <tr><td class="one">1</td><td class="one">1</td><td class="out one">1</td></tr>
+            </table>
+          </div>
+
+          <h3>تنفيذ البوابات من NAND فقط</h3>
+          <p>لأن NAND بوابة عالمية، يمكن بناء NOT و AND و OR منها:</p>
+          <!-- NAND implementations SVG -->
+          <div class="svg-wrap">
+            <svg viewBox="0 0 500 300" width="500" height="300" xmlns="http://www.w3.org/2000/svg">
+              <!-- Section Label: NOT from NAND -->
+              <text x="20" y="25" style="fill:var(--wire-cyan);font-size:12px;font-family:monospace">NOT from NAND (connect both inputs)</text>
+              <!-- NAND gate 1 -->
+              <line x1="20" y1="55" x2="100" y2="55" class="wire"/>
+              <line x1="20" y1="55" x2="20" y2="75" class="wire"/>
+              <line x1="20" y1="75" x2="100" y2="75" class="wire"/>
+              <path d="M100,40 L100,90 L130,90 Q155,90 155,65 Q155,40 130,40 Z" class="gate-body"/>
+              <circle cx="162" cy="65" r="7" class="bubble"/>
+              <line x1="169" y1="65" x2="230" y2="65" class="wire"/>
+              <text x="10" y="58" class="input-label">A</text>
+              <text x="216" y="61" class="output-label">A'</text>
+              <text x="112" y="69" style="fill:#fff;font-size:10px;font-family:monospace">NAND</text>
+
+              <!-- Section Label: AND from NAND -->
+              <text x="20" y="120" style="fill:var(--wire-cyan);font-size:12px;font-family:monospace">AND from 2× NAND</text>
+              <!-- NAND1 -->
+              <line x1="20" y1="148" x2="80" y2="148" class="wire"/>
+              <line x1="20" y1="168" x2="80" y2="168" class="wire"/>
+              <path d="M80,133 L80,183 L108,183 Q132,183 132,158 Q132,133 108,133 Z" class="gate-body"/>
+              <circle cx="139" cy="158" r="7" class="bubble"/>
+              <!-- wire from NAND1 to NAND2 -->
+              <line x1="146" y1="158" x2="175" y2="158" class="wire"/>
+              <line x1="175" y1="148" x2="220" y2="148" class="wire"/>
+              <line x1="175" y1="168" x2="220" y2="168" class="wire"/>
+              <line x1="175" y1="148" x2="175" y2="168" class="wire"/>
+              <!-- NAND2 (inverter) -->
+              <path d="M220,133 L220,183 L248,183 Q272,183 272,158 Q272,133 248,133 Z" class="gate-body"/>
+              <circle cx="279" cy="158" r="7" class="bubble"/>
+              <line x1="286" y1="158" x2="340" y2="158" class="wire"/>
+              <text x="10" y="150" class="input-label">A</text>
+              <text x="10" y="172" class="input-label">B</text>
+              <text x="327" y="154" class="output-label">AB</text>
+              <text x="88" y="162" style="fill:#fff;font-size:9px;font-family:monospace">NAND</text>
+              <text x="228" y="162" style="fill:#fff;font-size:9px;font-family:monospace">NAND</text>
+
+              <!-- Section Label: OR from NAND -->
+              <text x="20" y="225" style="fill:var(--wire-cyan);font-size:12px;font-family:monospace">OR from 3× NAND</text>
+              <!-- NAND not-A -->
+              <line x1="20" y1="250" x2="70" y2="250" class="wire"/>
+              <line x1="20" y1="250" x2="20" y2="260" class="wire"/>
+              <line x1="20" y1="260" x2="70" y2="260" class="wire"/>
+              <path d="M70,240 L70,270 L90,270 Q108,270 108,255 Q108,240 90,240 Z" class="gate-body"/>
+              <circle cx="114" cy="255" r="6" class="bubble"/>
+              <line x1="120" y1="255" x2="180" y2="255" class="wire"/>
+              <!-- NAND not-B -->
+              <line x1="20" y1="275" x2="70" y2="275" class="wire"/>
+              <line x1="20" y1="275" x2="20" y2="285" class="wire"/>
+              <line x1="20" y1="285" x2="70" y2="285" class="wire"/>
+              <path d="M70,265 L70,295 L90,295 Q108,295 108,280 Q108,265 90,265 Z" class="gate-body"/>
+              <circle cx="114" cy="280" r="6" class="bubble"/>
+              <line x1="120" y1="280" x2="180" y2="275" class="wire"/>
+              <!-- Final NAND -->
+              <line x1="180" y1="255" x2="225" y2="255" class="wire"/>
+              <line x1="180" y1="275" x2="225" y2="275" class="wire"/>
+              <line x1="180" y1="255" x2="180" y2="275" class="wire-secondary"/>
+              <path d="M225,245 L225,285 L250,285 Q272,285 272,265 Q272,245 250,245 Z" class="gate-body"/>
+              <circle cx="279" cy="265" r="6" class="bubble"/>
+              <line x1="285" y1="265" x2="340" y2="265" class="wire"/>
+              <text x="10" y="253" class="input-label">A</text>
+              <text x="10" y="278" class="input-label">B</text>
+              <text x="327" y="261" class="output-label">A+B</text>
+            </svg>
+          </div>
+
+        </div>
+      </details>
+
+      <!-- 2.3 Boolean Expression Forms -->
+      <details id="sop-pos">
+        <summary>
+          <span class="topic-icon" style="background:rgba(0,229,255,0.1)">Σ</span>
+          2.3 — صيغ التعبير البوليني (SOP & POS)
+        </summary>
+        <div class="details-body">
+
+          <h3>المصطلح الصغير — Minterm</h3>
+          <div class="callout def">
+            <div class="callout-title">تعريف</div>
+            <p>المصطلح الصغير (Minterm) هو حاصل ضرب (AND) لجميع متغيرات الدالة، حيث كل متغير إما عادي أو مكمَّل. يُرمز إليه بـ <code>mₙ</code> حيث n هو قيمة الصف العشرية في جدول الحقيقة.</p>
+          </div>
+          <div class="callout example">
+            <div class="callout-title">مثال لدالة بثلاثة متغيرات A, B, C</div>
+            <div class="math">m₀ = A'B'C'  (A=0,B=0,C=0)
+m₁ = A'B'C   (A=0,B=0,C=1)
+m₂ = A'BC'   (A=0,B=1,C=0)
+m₃ = A'BC    (A=0,B=1,C=1)
+m₄ = AB'C'   (A=1,B=0,C=0)
+m₅ = AB'C    (A=1,B=0,C=1)
+m₆ = ABC'    (A=1,B=1,C=0)
+m₇ = ABC     (A=1,B=1,C=1)</div>
+          </div>
+
+          <h3>صيغة SOP — Sum of Products (مجموع الضربات)</h3>
+          <div class="callout def">
+            <div class="callout-title">تعريف</div>
+            <p>SOP هي مجموع (OR) لعدة حدود ضرب (AND). نستخرجها من جدول الحقيقة بأخذ صفوف الخرج = 1.</p>
+          </div>
+          <div class="callout example">
+            <div class="callout-title">مثال: F(A,B,C) = Σ(1,3,5,7)</div>
+            <div class="math">m₁ = A'B'C
+m₃ = A'BC
+m₅ = AB'C
+m₇ = ABC
+
+F = A'B'C + A'BC + AB'C + ABC
+  = C(A'B' + A'B + AB' + AB)
+  = C · 1 = C
+
+→ F = C  (بعد التبسيط)</div>
+          </div>
+
+          <h3>المصطلح الكبير — Maxterm</h3>
+          <div class="callout def">
+            <div class="callout-title">تعريف</div>
+            <p>المصطلح الكبير (Maxterm) هو مجموع (OR) لجميع المتغيرات. يُرمز إليه بـ <code>Mₙ</code>. نستخرجه من صفوف الخرج = 0. المتغير العادي يكتب بعلامة موجبة، والمكمَّل يكتب بعلامة سالبة (مقلوبًا مقارنةً بالـ Minterm).</p>
+          </div>
+
+          <h3>صيغة POS — Product of Sums (ضرب المجاميع)</h3>
+          <div class="callout def">
+            <div class="callout-title">تعريف</div>
+            <p>POS هو ضرب (AND) لعدة مجاميع (OR). نستخرجها من صفوف الخرج = 0.</p>
+          </div>
+          <div class="callout example">
+            <div class="callout-title">مثال: F(A,B,C) = Π(0,2,4,6)</div>
+            <div class="math">M₀ = A+B+C
+M₂ = A+B'+C
+M₄ = A'+B+C
+M₆ = A'+B'+C
+
+F = (A+B+C)(A+B'+C)(A'+B+C)(A'+B'+C)
+
+بعد التبسيط → F = C</div>
+          </div>
+
+          <h3>العلاقة بين SOP و POS</h3>
+          <div class="callout theorem">
+            <div class="callout-title">علاقة مهمة</div>
+            <div class="math">إذا كانت: F = Σ(1,3,5,7)
+فإن:    F' = Σ(0,2,4,6) = Π(1,3,5,7)
+
+المصطلح الكبير لـ n هو مكمَّل المصطلح الصغير لنفس n:
+Mₙ = mₙ'</div>
+          </div>
+
+          <h3>دائرة SOP متكاملة — 3 متغيرات</h3>
+          <!-- Multi-gate SOP Circuit SVG -->
+          <div class="svg-wrap">
+            <svg viewBox="0 0 500 220" width="500" height="220" xmlns="http://www.w3.org/2000/svg">
+              <!-- F = AB + AC + BC -->
+              <text x="10" y="18" style="fill:var(--wire-cyan);font-size:12px;font-family:monospace">F = AB + A'C + BC</text>
+
+              <!-- Input lines -->
+              <line x1="30" y1="40" x2="500" y2="40" class="wire-secondary" style="stroke-dasharray:4,4; opacity:0.3"/>
+              <line x1="30" y1="80" x2="500" y2="80" class="wire-secondary" style="stroke-dasharray:4,4; opacity:0.3"/>
+              <line x1="30" y1="120" x2="500" y2="120" class="wire-secondary" style="stroke-dasharray:4,4; opacity:0.3"/>
+              <text x="12" y="44" class="input-label">A</text>
+              <text x="12" y="84" class="input-label">B</text>
+              <text x="12" y="124" class="input-label">C</text>
+
+              <!-- AND gate 1: AB -->
+              <line x1="50" y1="40" x2="120" y2="52" class="wire"/>
+              <line x1="50" y1="80" x2="120" y2="68" class="wire"/>
+              <path d="M120,42 L120,78 L143,78 Q163,78 163,60 Q163,42 143,42 Z" class="gate-body"/>
+              <line x1="163" y1="60" x2="200" y2="60" class="wire"/>
+              <text x="132" y="64" style="fill:#fff;font-size:9px;font-family:monospace">AND</text>
+
+              <!-- NOT gate for A' -->
+              <line x1="50" y1="40" x2="50" y2="150" class="wire"/>
+              <line x1="50" y1="150" x2="90" y2="150" class="wire"/>
+              <polygon points="90,140 90,160 118,150" class="gate-body-not"/>
+              <circle cx="124" cy="150" r="6" class="bubble"/>
+              <line x1="130" y1="150" x2="148" y2="150" class="wire"/>
+
+              <!-- AND gate 2: A'C -->
+              <line x1="130" y1="150" x2="148" y2="142" class="wire"/>
+              <line x1="70" y1="120" x2="148" y2="132" class="wire"/>
+              <path d="M148,122 L148,162 L171,162 Q191,162 191,142 Q191,122 171,122 Z" class="gate-body"/>
+              <line x1="191" y1="142" x2="220" y2="142" class="wire"/>
+              <text x="156" y="146" style="fill:#fff;font-size:9px;font-family:monospace">AND</text>
+
+              <!-- AND gate 3: BC -->
+              <line x1="60" y1="80" x2="120" y2="190" class="wire"/>
+              <line x1="60" y1="120" x2="120" y2="200" class="wire"/>
+              <path d="M120,180 L120,210 L143,210 Q163,210 163,195 Q163,180 143,180 Z" class="gate-body"/>
+              <line x1="163" y1="195" x2="220" y2="195" class="wire"/>
+              <text x="130" y="199" style="fill:#fff;font-size:9px;font-family:monospace">AND</text>
+
+              <!-- OR gate (3-input) -->
+              <line x1="200" y1="60" x2="260" y2="108" class="wire"/>
+              <line x1="220" y1="142" x2="260" y2="128" class="wire"/>
+              <line x1="220" y1="195" x2="260" y2="155" class="wire"/>
+              <path d="M260,90 Q278,130 260,170 L290,170 Q340,170 340,130 Q340,90 290,90 Z" class="gate-body" style="stroke:var(--wire-green)"/>
+              <path d="M260,90 Q274,130 260,170" style="fill:none;stroke:var(--wire-green);stroke-width:2"/>
+              <line x1="340" y1="130" x2="420" y2="130" class="wire"/>
+              <text x="285" y="134" style="fill:#fff;font-size:9px;font-family:monospace">OR</text>
+              <text x="408" y="126" class="output-label">F</text>
+            </svg>
+          </div>
+
+        </div>
+      </details>
+
+      <!-- 2.4 Boolean Simplification -->
+      <details>
+        <summary>
+          <span class="topic-icon" style="background:rgba(156,33,176,0.1)">✂️</span>
+          2.4 — التبسيط الجبري (Algebraic Simplification)
+        </summary>
+        <div class="details-body">
+
+          <div class="callout def">
+            <div class="callout-title">لماذا التبسيط؟</div>
+            <p>الدالة المُبسَّطة = عدد أقل من البوابات = تكلفة أقل، استهلاك طاقة أقل، وسرعة أعلى. هدفنا هو الحصول على أبسط صيغة SOP أو POS.</p>
+          </div>
+
+          <h3>خطوات التبسيط الجبري</h3>
+          <ol>
+            <li>ابحث عن المتغيرات الظاهرة مع مكمَّلاتها.</li>
+            <li>طبّق قانون X + X'Y = X + Y (قانون الامتصاص).</li>
+            <li>طبّق قانون AB + AB' = A.</li>
+            <li>استخدم دي مورغان عند الحاجة.</li>
+          </ol>
+
+          <div class="callout example">
+            <div class="callout-title">مثال 1: بسّط F = ABC + ABC' + A'BC</div>
+            <div class="math">F = ABC + ABC' + A'BC
+  = AB(C + C') + A'BC   ← عامل مشترك AB
+  = AB(1) + A'BC
+  = AB + A'BC            ← طبّق: X+X'Y = X+Y مع X=AB
+  = AB + A'BC
+  طبّق مرة أخرى: AB + A'BC = AB + A'C (لأن B مشترك)
+  ... أو بطريقة الـ K-Map: الفصل القادم</div>
+          </div>
+
+          <div class="callout example">
+            <div class="callout-title">مثال 2: بسّط F = (A+B)(A+B')</div>
+            <div class="math">F = (A+B)(A+B')
+  = A·A + A·B' + B·A + B·B'    ← وزّع
+  = A + AB' + AB + 0
+  = A + A(B'+B)
+  = A + A·1
+  = A + A = A
+
+∴ F = A</div>
+          </div>
+
+          <div class="callout example">
+            <div class="callout-title">مثال 3: بسّط F = AB + A'C + BC</div>
+            <div class="math">BC = BC(A+A') = ABC + A'BC   ← أضف الحد BC (consensus theorem)
+
+F = AB + A'C + BC
+  = AB + A'C               ← BC حد زائد (redundant) بموجب consensus theorem
+
+∴ F = AB + A'C</div>
+          </div>
+
+        </div>
+      </details>
+
+    </div>
+  </div><!-- end ch2 -->
+
+
+  <!-- ═══════════════════════════════════════════════
+       CHAPTER 3: K-Map Simplification
+  ════════════════════════════════════════════════ -->
+  <div class="chapter" id="ch3">
+    <div class="chapter-header" onclick="toggleChapter('ch3')">
+      <div class="chapter-num">03</div>
+      <div class="chapter-meta">
+        <h2>Karnaugh Map Simplification — تبسيط خرائط كارنو</h2>
+        <p>K-Map للمتغيرين والثلاث والأربعة متغيرات، والحالات اللامبالية</p>
+      </div>
+      <div class="chapter-toggle">▶</div>
+    </div>
+    <div class="chapter-body">
+
+      <!-- 3.1 K-Map Intro -->
+      <details open>
+        <summary>
+          <span class="topic-icon" style="background:rgba(0,229,255,0.1)">🗺️</span>
+          3.1 — مقدمة في خرائط كارنو (K-Map Introduction)
+        </summary>
+        <div class="details-body">
+
+          <div class="callout def">
+            <div class="callout-title">تعريف</div>
+            <p>خريطة كارنو (Karnaugh Map / K-Map) هي طريقة بصرية لتبسيط الدوال البوليانية. ابتكرها <strong>Maurice Karnaugh</strong> عام 1953. تعتمد على تنظيم المصطلحات الصغيرة في جدول بترتيب Gray Code بحيث تكون الخانات المتجاورة تختلف في متغير واحد فقط.</p>
+          </div>
+
+          <h3>مبدأ التجميع (Grouping)</h3>
+          <ul>
+            <li>نجمّع خانات الـ 1s (لصيغة SOP) في مجموعات بأحجام قوى 2: 1, 2, 4, 8, 16.</li>
+            <li>كل مجموعة يجب أن تكون مستطيلة الشكل (أو حلقية/ملتفة).</li>
+            <li>المجموعة الأكبر → أقل متغيرات → تبسيط أكبر.</li>
+            <li>يُسمح بالتداخل بين المجموعات.</li>
+            <li>يُسمح بالالتفاف (الخانات على الأطراف متجاورة).</li>
+          </ul>
+
+          <h3>قاعدة الحذف</h3>
+          <div class="callout theorem">
+            <div class="callout-title">قاعدة</div>
+            <div class="math">مجموعة حجم 2^n تُلغي n متغيرًا من التعبير.
+
+مجموعة 2  → تُلغي 1 متغير
+مجموعة 4  → تُلغي 2 متغير
+مجموعة 8  → تُلغي 3 متغيرات
+مجموعة 16 → تُلغي 4 متغيرات (الدالة = 1 دائمًا)</div>
+          </div>
+
+        </div>
+      </details>
+
+      <!-- 3.2 2-Variable K-Map -->
+      <details id="kmap-2var">
+        <summary>
+          <span class="topic-icon" style="background:rgba(57,255,20,0.1)">2️⃣</span>
+          3.2 — K-Map بمتغيرين (2×2)
+        </summary>
+        <div class="details-body">
+
+          <h3>هيكل الخريطة</h3>
+          <div class="kmap-wrap">
+            <table class="kmap">
+              <tr>
+                <th>AB\<br>(أو A/B)</th>
+                <th>B=0</th>
+                <th>B=1</th>
+              </tr>
+              <tr>
+                <th>A=0</th>
+                <td>m₀<br><small style="color:var(--text-muted)">(00)</small></td>
+                <td>m₁<br><small style="color:var(--text-muted)">(01)</small></td>
+              </tr>
+              <tr>
+                <th>A=1</th>
+                <td>m₂<br><small style="color:var(--text-muted)">(10)</small></td>
+                <td>m₃<br><small style="color:var(--text-muted)">(11)</small></td>
+              </tr>
+            </table>
+          </div>
+
+          <div class="callout example">
+            <div class="callout-title">مثال: F(A,B) = Σ(1,2,3)</div>
+            <div class="kmap-wrap">
+              <table class="kmap">
+                <tr><th></th><th>B=0</th><th>B=1</th></tr>
+                <tr>
+                  <th>A=0</th>
+                  <td class="k0">0</td>
+                  <td class="k1 g-red">1</td>
+                </tr>
+                <tr>
+                  <th>A=1</th>
+                  <td class="k1 g-blue">1</td>
+                  <td class="k1 g-red g-blue">1</td>
+                </tr>
+              </table>
+            </div>
+            <div class="math">المجموعة الحمراء (m₁, m₃): A=0→1 (تتغير) | B=1 ثابت → حد: B
+المجموعة الزرقاء (m₂, m₃): A=1 ثابت | B=0→1 (تتغير) → حد: A
+
+F = A + B</div>
+          </div>
+
+        </div>
+      </details>
+
+      <!-- 3.3 3-Variable K-Map -->
+      <details id="kmap-3var">
+        <summary>
+          <span class="topic-icon" style="background:rgba(255,179,0,0.1)">3️⃣</span>
+          3.3 — K-Map بثلاثة متغيرات (2×4)
+        </summary>
+        <div class="details-body">
+
+          <h3>هيكل الخريطة — الترتيب Gray Code مهم!</h3>
+          <p>ترتيب الأعمدة: 00, 01, 11, 10 (وليس 00, 01, 10, 11)</p>
+          <div class="kmap-wrap">
+            <table class="kmap">
+              <tr>
+                <th>A \ BC</th>
+                <th>BC=00</th>
+                <th>BC=01</th>
+                <th>BC=11</th>
+                <th>BC=10</th>
+              </tr>
+              <tr>
+                <th>A=0</th>
+                <td>m₀</td><td>m₁</td><td>m₃</td><td>m₂</td>
+              </tr>
+              <tr>
+                <th>A=1</th>
+                <td>m₄</td><td>m₅</td><td>m₇</td><td>m₆</td>
+              </tr>
+            </table>
+          </div>
+
+          <div class="callout example">
+            <div class="callout-title">مثال 1: F(A,B,C) = Σ(0,2,4,6)</div>
+            <div class="kmap-wrap">
+              <table class="kmap">
+                <tr><th>A\BC</th><th>00</th><th>01</th><th>11</th><th>10</th></tr>
+                <tr>
+                  <th>0</th>
+                  <td class="k1 g-red">1</td>
+                  <td class="k0">0</td>
+                  <td class="k0">0</td>
+                  <td class="k1 g-red">1</td>
+                </tr>
+                <tr>
+                  <th>1</th>
+                  <td class="k1 g-red">1</td>
+                  <td class="k0">0</td>
+                  <td class="k0">0</td>
+                  <td class="k1 g-red">1</td>
+                </tr>
+              </table>
+            </div>
+            <div class="math">المجموعة الحمراء: m₀,m₂,m₄,m₆ (العمودان الأول والأخير ملتفّان)
+A تتغير (0→1) ← تُحذف
+C = 0 ثابت
+B تتغير (0→1) ← تُحذف
+
+الحد الناتج: C'
+
+∴ F = C'</div>
+          </div>
+
+          <div class="callout example">
+            <div class="callout-title">مثال 2: F(A,B,C) = Σ(1,3,5,7)</div>
+            <div class="kmap-wrap">
+              <table class="kmap">
+                <tr><th>A\BC</th><th>00</th><th>01</th><th>11</th><th>10</th></tr>
+                <tr>
+                  <th>0</th>
+                  <td class="k0">0</td>
+                  <td class="k1 g-red">1</td>
+                  <td class="k1 g-red">1</td>
+                  <td class="k0">0</td>
+                </tr>
+                <tr>
+                  <th>1</th>
+                  <td class="k0">0</td>
+                  <td class="k1 g-red">1</td>
+                  <td class="k1 g-red">1</td>
+                  <td class="k0">0</td>
+                </tr>
+              </table>
+            </div>
+            <div class="math">جميع الـ 4 في العمودين الأوسطين:
+A تتغير ← تُحذف
+B = 1 ثابت (في BC=01 و BC=11 كلاهما B=?)
+→ في BC=01: B=0, C=1
+→ في BC=11: B=1, C=1
+C = 1 ثابت في كلا العمودين ← تبقى
+
+∴ F = C</div>
+          </div>
+
+          <div class="callout example">
+            <div class="callout-title">مثال 3: F(A,B,C) = Σ(3,4,6,7)</div>
+            <div class="kmap-wrap">
+              <table class="kmap">
+                <tr><th>A\BC</th><th>00</th><th>01</th><th>11</th><th>10</th></tr>
+                <tr>
+                  <th>0</th>
+                  <td class="k0">0</td>
+                  <td class="k0">0</td>
+                  <td class="k1 g-red">1</td>
+                  <td class="k0">0</td>
+                </tr>
+                <tr>
+                  <th>1</th>
+                  <td class="k1 g-blue">1</td>
+                  <td class="k0">0</td>
+                  <td class="k1 g-red">1</td>
+                  <td class="k1 g-blue">1</td>
+                </tr>
+              </table>
+            </div>
+            <div class="math">المجموعة الحمراء (m₃, m₇): A تتغير ← تُحذف | B=1, C=1 ثابتان
+الحد: BC
+
+المجموعة الزرقاء (m₄, m₆): A=1 ثابت | C=0 ثابت | B تتغير ← تُحذف
+الحد: AC'
+
+∴ F = BC + AC'</div>
+          </div>
+
+          <div class="callout example">
+            <div class="callout-title">مثال 4: F(A,B,C) = Σ(0,1,2,3,4,5)</div>
+            <div class="kmap-wrap">
+              <table class="kmap">
+                <tr><th>A\BC</th><th>00</th><th>01</th><th>11</th><th>10</th></tr>
+                <tr>
+                  <th>0</th>
+                  <td class="k1 g-red">1</td>
+                  <td class="k1 g-red">1</td>
+                  <td class="k1 g-red">1</td>
+                  <td class="k1 g-red">1</td>
+                </tr>
+                <tr>
+                  <th>1</th>
+                  <td class="k1 g-blue">1</td>
+                  <td class="k1 g-blue">1</td>
+                  <td class="k0">0</td>
+                  <td class="k0">0</td>
+                </tr>
+              </table>
+            </div>
+            <div class="math">المجموعة الحمراء (الصف كله A=0): A=0 ثابت → حد: A'
+المجموعة الزرقاء (m₄, m₅): A=1, C تتغير ← تُحذف, B=0 → حد: AB'
+
+∴ F = A' + AB'  →  يُبسَّط إلى: F = A' + B'</div>
+          </div>
+
+        </div>
+      </details>
+
+      <!-- 3.4 4-Variable K-Map -->
+      <details id="kmap-4var">
+        <summary>
+          <span class="topic-icon" style="background:rgba(247,37,133,0.1)">4️⃣</span>
+          3.4 — K-Map بأربعة متغيرات (4×4)
+        </summary>
+        <div class="details-body">
+
+          <h3>هيكل الخريطة 4×4</h3>
+          <div class="kmap-wrap">
+            <table class="kmap">
+              <tr>
+                <th>AB \ CD</th>
+                <th>CD=00</th>
+                <th>CD=01</th>
+                <th>CD=11</th>
+                <th>CD=10</th>
+              </tr>
+              <tr>
+                <th>AB=00</th>
+                <td>m₀</td><td>m₁</td><td>m₃</td><td>m₂</td>
+              </tr>
+              <tr>
+                <th>AB=01</th>
+                <td>m₄</td><td>m₅</td><td>m₇</td><td>m₆</td>
+              </tr>
+              <tr>
+                <th>AB=11</th>
+                <td>m₁₂</td><td>m₁₃</td><td>m₁₅</td><td>m₁₄</td>
+              </tr>
+              <tr>
+                <th>AB=10</th>
+                <td>m₈</td><td>m₉</td><td>m₁₁</td><td>m₁₀</td>
+              </tr>
+            </table>
+          </div>
+
+          <div class="callout example">
+            <div class="callout-title">مثال 1: F(A,B,C,D) = Σ(0,1,2,3,4,5,6,7)</div>
+            <div class="kmap-wrap">
+              <table class="kmap">
+                <tr><th>AB\CD</th><th>00</th><th>01</th><th>11</th><th>10</th></tr>
+                <tr>
+                  <th>00</th>
+                  <td class="k1 g-red">1</td>
+                  <td class="k1 g-red">1</td>
+                  <td class="k1 g-red">1</td>
+                  <td class="k1 g-red">1</td>
+                </tr>
+                <tr>
+                  <th>01</th>
+                  <td class="k1 g-red">1</td>
+                  <td class="k1 g-red">1</td>
+                  <td class="k1 g-red">1</td>
+                  <td class="k1 g-red">1</td>
+                </tr>
+                <tr>
+                  <th>11</th>
+                  <td class="k0">0</td>
+                  <td class="k0">0</td>
+                  <td class="k0">0</td>
+                  <td class="k0">0</td>
+                </tr>
+                <tr>
+                  <th>10</th>
+                  <td class="k0">0</td>
+                  <td class="k0">0</td>
+                  <td class="k0">0</td>
+                  <td class="k0">0</td>
+                </tr>
+              </table>
+            </div>
+            <div class="math">مجموعة 8: الصفان العلويان (AB=00 و AB=01)
+A=0 ثابت | B تتغير ← تُحذف | C تتغير ← تُحذف | D تتغير ← تُحذف
+
+∴ F = A'</div>
+          </div>
+
+          <div class="callout example">
+            <div class="callout-title">مثال 2: F(A,B,C,D) = Σ(0,2,4,6,8,10,12,14)</div>
+            <div class="kmap-wrap">
+              <table class="kmap">
+                <tr><th>AB\CD</th><th>00</th><th>01</th><th>11</th><th>10</th></tr>
+                <tr>
+                  <th>00</th>
+                  <td class="k1 g-red">1</td>
+                  <td class="k0">0</td>
+                  <td class="k0">0</td>
+                  <td class="k1 g-red">1</td>
+                </tr>
+                <tr>
+                  <th>01</th>
+                  <td class="k1 g-red">1</td>
+                  <td class="k0">0</td>
+                  <td class="k0">0</td>
+                  <td class="k1 g-red">1</td>
+                </tr>
+                <tr>
+                  <th>11</th>
+                  <td class="k1 g-red">1</td>
+                  <td class="k0">0</td>
+                  <td class="k0">0</td>
+                  <td class="k1 g-red">1</td>
+                </tr>
+                <tr>
+                  <th>10</th>
+                  <td class="k1 g-red">1</td>
+                  <td class="k0">0</td>
+                  <td class="k0">0</td>
+                  <td class="k1 g-red">1</td>
+                </tr>
+              </table>
+            </div>
+            <div class="math">مجموعة 8: الأعمدة الأولى والأخيرة (ملتفة! CD=00 و CD=10)
+A تتغير ← تُحذف | B تتغير ← تُحذف | D=0 ثابت | C تتغير ← تُحذف
+
+∴ F = D'</div>
+          </div>
+
+          <div class="callout example">
+            <div class="callout-title">مثال 3: F = Σ(0,1,4,5,8,9,12,13)</div>
+            <div class="kmap-wrap">
+              <table class="kmap">
+                <tr><th>AB\CD</th><th>00</th><th>01</th><th>11</th><th>10</th></tr>
+                <tr>
+                  <th>00</th>
+                  <td class="k1 g-red">1</td>
+                  <td class="k1 g-red">1</td>
+                  <td class="k0">0</td>
+                  <td class="k0">0</td>
+                </tr>
+                <tr>
+                  <th>01</th>
+                  <td class="k1 g-red">1</td>
+                  <td class="k1 g-red">1</td>
+                  <td class="k0">0</td>
+                  <td class="k0">0</td>
+                </tr>
+                <tr>
+                  <th>11</th>
+                  <td class="k1 g-red">1</td>
+                  <td class="k1 g-red">1</td>
+                  <td class="k0">0</td>
+                  <td class="k0">0</td>
+                </tr>
+                <tr>
+                  <th>10</th>
+                  <td class="k1 g-red">1</td>
+                  <td class="k1 g-red">1</td>
+                  <td class="k0">0</td>
+                  <td class="k0">0</td>
+                </tr>
+              </table>
+            </div>
+            <div class="math">مجموعة 8: العمودان الأولان (CD=00 و CD=01)
+A,B,C كلها تتغير ← تُحذف | D تتغير... C'=1 ثابت في الحالتين
+انظر: CD=00 → C=0,D=0 | CD=01 → C=0,D=1
+C=0 ثابت, D تتغير ← تُحذف
+
+∴ F = C'</div>
+          </div>
+
+          <div class="callout example">
+            <div class="callout-title">مثال 4 (مركّب): F = Σ(1,3,5,7,8,10,14,15)</div>
+            <div class="kmap-wrap">
+              <table class="kmap">
+                <tr><th>AB\CD</th><th>00</th><th>01</th><th>11</th><th>10</th></tr>
+                <tr>
+                  <th>00</th>
+                  <td class="k0">0</td>
+                  <td class="k1 g-red">1</td>
+                  <td class="k1 g-red">1</td>
+                  <td class="k0">0</td>
+                </tr>
+                <tr>
+                  <th>01</th>
+                  <td class="k0">0</td>
+                  <td class="k1 g-red">1</td>
+                  <td class="k1 g-red">1</td>
+                  <td class="k0">0</td>
+                </tr>
+                <tr>
+                  <th>11</th>
+                  <td class="k0">0</td>
+                  <td class="k0">0</td>
+                  <td class="k1 g-blue">1</td>
+                  <td class="k1 g-blue">1</td>
+                </tr>
+                <tr>
+                  <th>10</th>
+                  <td class="k1 g-green">1</td>
+                  <td class="k0">0</td>
+                  <td class="k0">0</td>
+                  <td class="k1 g-green">1</td>
+                </tr>
+              </table>
+            </div>
+            <div class="math">المجموعة الحمراء (m₁,m₃,m₅,m₇): CD=01 و CD=11 → D=1 ثابت, A=0, B تتغير, C تتغير
+→ A'D
+
+المجموعة الزرقاء (m₁₄,m₁₅): AB=11, CD=10 و CD=11 → A=1,B=1,C=1,D تتغير
+→ ABC
+
+المجموعة الخضراء (m₈,m₁₀): AB=10, CD=00 و CD=10 → A=1,B=0,D=0,C تتغير
+→ AB'D'
+
+∴ F = A'D + ABC + AB'D'</div>
+          </div>
+
+        </div>
+      </details>
+
+      <!-- 3.5 Don't Care -->
+      <details>
+        <summary>
+          <span class="topic-icon" style="background:rgba(255,179,0,0.1)">X</span>
+          3.5 — الحالات اللامبالية (Don't Care Conditions)
+        </summary>
+        <div class="details-body">
+
+          <div class="callout def">
+            <div class="callout-title">تعريف</div>
+            <p>الحالة اللامبالية (Don't Care) هي مصطلح صغير لن يحدث أبدًا في الواقع، أو لا يهمنا قيمة الخرج عنده. نرمز له بـ <code>X</code> أو <code>d</code> في خريطة كارنو. يمكن اعتباره 0 أو 1 حسب ما يساعد في الحصول على مجموعات أكبر.</p>
+          </div>
+
+          <div class="callout example">
+            <div class="callout-title">مثال BCD: F(A,B,C,D) = Σ(1,2,3,7) + d(8,9,10,11,12,13,14,15)</div>
+            <p>الأعداد 10-15 لا تظهر في BCD (أرقام 0-9 فقط) → don't care.</p>
+            <div class="kmap-wrap">
+              <table class="kmap">
+                <tr><th>AB\CD</th><th>00</th><th>01</th><th>11</th><th>10</th></tr>
+                <tr>
+                  <th>00</th>
+                  <td class="k0">0</td>
+                  <td class="k1 g-red">1</td>
+                  <td class="k1 g-red">1</td>
+                  <td class="k1 g-red">1</td>
+                </tr>
+                <tr>
+                  <th>01</th>
+                  <td class="k0">0</td>
+                  <td class="k0">0</td>
+                  <td class="k1 g-blue">1</td>
+                  <td class="k0">0</td>
+                </tr>
+                <tr>
+                  <th>11</th>
+                  <td class="kX g-red">X</td>
+                  <td class="kX g-red">X</td>
+                  <td class="kX g-blue">X</td>
+                  <td class="kX">X</td>
+                </tr>
+                <tr>
+                  <th>10</th>
+                  <td class="kX g-red">X</td>
+                  <td class="kX">X</td>
+                  <td class="kX">X</td>
+                  <td class="kX">X</td>
+                </tr>
+              </table>
+            </div>
+            <div class="math">المجموعة الحمراء (m₁,m₂,m₃,m₈,m₁₂,m₁₃,Xs): 
+استغلال don't cares للحصول على مجموعة كبيرة:
+{m₁,m₃,m₉,m₁₁,m₁₃,m₁₅} → CD=01 و CD=11 → D=1 ثابت, C تتغير
+→ حد: D (بعد الفحص الدقيق)
+
+في هذه المسألة تبسيط الدالة يعطي: F = A + B'C + CD</div>
+          </div>
+
+          <h3>قواعد استخدام Don't Care</h3>
+          <ol>
+            <li>يمكن تضمين X في مجموعة لتكبيرها.</li>
+            <li>لا يُشترط تضمين كل X — يمكن تجاهله تمامًا.</li>
+            <li>X وحده لا يُكوّن مجموعة (يجب وجود 1 على الأقل).</li>
+          </ol>
+
+        </div>
+      </details>
+
+      <!-- 3.6 POS from K-Map -->
+      <details>
+        <summary>
+          <span class="topic-icon" style="background:rgba(156,33,176,0.1)">∏</span>
+          3.6 — استخراج POS من K-Map
+        </summary>
+        <div class="details-body">
+
+          <div class="callout def">
+            <div class="callout-title">طريقة POS من K-Map</div>
+            <p>لاستخراج صيغة POS (ضرب المجاميع)، نجمّع خانات الـ <strong>0s</strong> بدلاً من الـ 1s، ثم نكمّل المتغيرات عند بناء الحد (Maxterm).</p>
+          </div>
+
+          <div class="callout example">
+            <div class="callout-title">مثال: F(A,B,C) = Σ(1,2,4,7) = Π(0,3,5,6)</div>
+            <div class="kmap-wrap">
+              <table class="kmap">
+                <tr><th>A\BC</th><th>00</th><th>01</th><th>11</th><th>10</th></tr>
+                <tr>
+                  <th>0</th>
+                  <td class="k0 g-red">0</td>
+                  <td class="k1">1</td>
+                  <td class="k0 g-blue">0</td>
+                  <td class="k1">1</td>
+                </tr>
+                <tr>
+                  <th>1</th>
+                  <td class="k1">1</td>
+                  <td class="k0 g-blue">0</td>
+                  <td class="k1">1</td>
+                  <td class="k0 g-red">0</td>
+                </tr>
+              </table>
+            </div>
+            <div class="math">لاستخراج POS: نجمع خانات الـ 0s:
+
+المجموعة الحمراء (m₀, m₆): A تتغير ← تُحذف, B=0, C=0
+→ في Maxterm: الثابت 0 يُكتب عاديًا (B+C) [مقلوب!]
+الحد الكبير: (B + C)
+
+المجموعة الزرقاء (m₃, m₅): A تتغير ← تُحذف, B=?, C=?
+→ m₃=(A=0,B=1,C=1), m₅=(A=1,B=0,C=1): B تتغير ← تُحذف, C=1
+→ في Maxterm: C=1 يُكتب مكمَّلاً (C')
+الحد الكبير: (B' + C')... 
+
+∴ F = (B + C)(A' + B')</div>
+          </div>
+
+        </div>
+      </details>
+
+      <!-- 3.7 Prime Implicants -->
+      <details>
+        <summary>
+          <span class="topic-icon" style="background:rgba(0,229,255,0.1)">★</span>
+          3.7 — المضمّنات الأولية (Prime Implicants)
+        </summary>
+        <div class="details-body">
+
+          <div class="callout def">
+            <div class="callout-title">تعريف</div>
+            <p><strong>Prime Implicant (PI):</strong> أكبر مجموعة ممكنة لخانات الـ 1s لا يمكن تضمينها في مجموعة أكبر.</p>
+            <p><strong>Essential Prime Implicant (EPI):</strong> مضمَّن أولي يحتوي على خانة 1 لا تغطيها أي مجموعة أخرى — يجب تضمينه دائمًا في الحل.</p>
+          </div>
+
+          <div class="callout example">
+            <div class="callout-title">مثال: F(A,B,C,D) = Σ(0,2,3,4,7,9,11,13,15)</div>
+            <div class="kmap-wrap">
+              <table class="kmap">
+                <tr><th>AB\CD</th><th>00</th><th>01</th><th>11</th><th>10</th></tr>
+                <tr>
+                  <th>00</th>
+                  <td class="k1 g-red">1</td>
+                  <td class="k0">0</td>
+                  <td class="k1 g-blue">1</td>
+                  <td class="k1 g-red g-blue">1</td>
+                </tr>
+                <tr>
+                  <th>01</th>
+                  <td class="k1 g-red">1</td>
+                  <td class="k0">0</td>
+                  <td class="k1 g-blue g-green">1</td>
+                  <td class="k0">0</td>
+                </tr>
+                <tr>
+                  <th>11</th>
+                  <td class="k0">0</td>
+                  <td class="k1 g-yellow">1</td>
+                  <td class="k1 g-blue g-yellow">1</td>
+                  <td class="k0">0</td>
+                </tr>
+                <tr>
+                  <th>10</th>
+                  <td class="k0">0</td>
+                  <td class="k1 g-green g-yellow">1</td>
+                  <td class="k1 g-green">1</td>
+                  <td class="k0">0</td>
+                </tr>
+              </table>
+            </div>
+            <div class="math">المضمَّنات الأولية:
+PI₁ (أحمر): {m₀,m₂,m₄} → A'C'  [حجم 3 — ليس قوة 2! مثال غير صحيح]
+
+نصحح: المجموعات الصحيحة:
+PI₁ (أحمر ): {m₀,m₄}   → A'B'   ← Essential
+PI₂ (أزرق ): {m₂,m₃,m₇,m₁₁}... 
+
+قاعدة: ابدأ بالمجموعات الأكبر، ثم تحقق أيها Essential (وحيد التغطية)
+
+F = A'B' + BD + CD + ...</div>
+          </div>
+
+          <h3>خطوات منهجية للحل</h3>
+          <ol>
+            <li><strong>ارسم</strong> K-Map وضع قيم الدالة.</li>
+            <li><strong>حدد</strong> جميع Prime Implicants (أكبر مجموعات ممكنة).</li>
+            <li><strong>ابحث</strong> عن Essential PIs — خانات الـ 1 التي تغطيها مجموعة واحدة فقط.</li>
+            <li><strong>أضف</strong> EPIs إلى الحل أولاً.</li>
+            <li><strong>غطّ</strong> الخانات المتبقية بأقل عدد ممكن من PIs.</li>
+            <li><strong>اكتب</strong> التعبير النهائي.</li>
+          </ol>
+
+        </div>
+      </details>
+
+    </div>
+  </div><!-- end ch3 -->
+
+  <!-- FOOTER -->
+  <div style="padding: 40px 48px; border-top: 1px solid var(--border); text-align:center;">
+    <p style="color:var(--text-dim); font-size:13px; font-family:var(--font-mono)">
+      CSE 210 · Digital Logic Design · Batch 1: Chapters 1–3
+    </p>
+    <p style="color:var(--text-dim); font-size:12px; margin-top:6px">
+      اكتب <span style="color:var(--wire-cyan)">"Continue"</span> للحصول على الفصول 4–7
+    </p>
+  </div>
+
+</main>
+
+<!-- ═══════════════════ JAVASCRIPT ═══════════════════ -->
+<script>
+// Chapter toggle
+function toggleChapter(id) {
+  const ch = document.getElementById(id);
+  ch.classList.toggle('open');
+  const nav = document.querySelector(`.nav-item[onclick="goChapter('${id}')"]`);
+  if (nav) {
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    nav.classList.add('active');
+  }
+}
+
+// Open first chapter by default
+window.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('ch1').classList.add('open');
+});
+
+// Sidebar navigation
+function goChapter(id) {
+  const el = document.getElementById(id);
+  if (!el.classList.contains('open')) el.classList.add('open');
+  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  event.target.closest('.nav-item').classList.add('active');
+}
+
+function scrollTo(sel) {
+  const el = document.querySelector(sel);
+  if (el) {
+    // Open the parent chapter if needed
+    const chapter = el.closest('.chapter');
+    if (chapter && !chapter.classList.contains('open')) chapter.classList.add('open');
+    // Open the details if needed
+    if (el.tagName === 'DETAILS') el.open = true;
+    setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+  }
+}
+
+// Reading progress bar
+const bar = document.getElementById('reading-progress');
+const main = document.getElementById('main');
+window.addEventListener('scroll', () => {
+  const totalH = document.documentElement.scrollHeight - window.innerHeight;
+  const progress = window.scrollY / totalH;
+  bar.style.transform = `scaleX(${progress})`;
+});
+
+// Active nav on scroll
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id;
+      document.querySelectorAll('.nav-item').forEach(n => {
+        if (n.getAttribute('onclick')?.includes(id)) {
+          document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
+          n.classList.add('active');
+        }
+      });
+    }
+  });
+}, { threshold: 0.15 });
+
+['ch1','ch2','ch3'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) observer.observe(el);
+});
+
+// Search
+document.getElementById('search-input').addEventListener('input', function() {
+  const q = this.value.toLowerCase().trim();
+  if (!q) {
+    document.querySelectorAll('details').forEach(d => {
+      d.style.display = '';
+      d.style.borderColor = '';
+    });
+    return;
+  }
+  document.querySelectorAll('details').forEach(d => {
+    const text = d.textContent.toLowerCase();
+    if (text.includes(q)) {
+      d.style.display = '';
+      d.style.borderColor = 'var(--wire-cyan)';
+      d.open = true;
+    } else {
+      d.style.display = 'none';
+    }
+  });
+});
+</script>
+</body>
+</html>

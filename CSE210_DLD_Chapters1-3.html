@@ -865,6 +865,18 @@
       <a class="nav-item" data-target="ch3" onclick="showTab('ch3')">
         <span class="ch-num">03</span> Gate-Level Minimization
       </a>
+      <a class="nav-item" data-target="ch4" onclick="showTab('ch4')">
+        <span class="ch-num">04</span> Combinational Logic
+      </a>
+      <a class="nav-item" data-target="ch5" onclick="showTab('ch5')">
+        <span class="ch-num">05</span> Sequential Logic
+      </a>
+      <a class="nav-item" data-target="ch6" onclick="showTab('ch6')">
+        <span class="ch-num">06</span> Registers and Counters
+      </a>
+      <a class="nav-item" data-target="ch7" onclick="showTab('ch7')">
+        <span class="ch-num">07</span> Memory & Programmable Logic
+      </a>
     </div>
 
     <div class="sidebar-section">
@@ -878,6 +890,21 @@
       <a class="nav-item" onclick="scrollToSection('#ch3-kmap4')">4-Variable K-Maps</a>
       <a class="nav-item" onclick="scrollToSection('#ch3-dontcare')">Don't-Care Groups</a>
       <a class="nav-item" onclick="scrollToSection('#ch3-universal')">NAND/NOR Logic</a>
+      <a class="nav-item" onclick="scrollToSection('#ch4-intro')">Combinational Intro</a>
+      <a class="nav-item" onclick="scrollToSection('#ch4-adders')">Adder-Subtractor Circuits</a>
+      <a class="nav-item" onclick="scrollToSection('#ch4-bcd')">BCD-to-Excess 3 Converter</a>
+      <a class="nav-item" onclick="scrollToSection('#ch4-decoders')">Decoders & Encoders</a>
+      <a class="nav-item" onclick="scrollToSection('#ch4-mux')">Multiplexers</a>
+      <a class="nav-item" onclick="scrollToSection('#ch5-intro')">Sequential Intro</a>
+      <a class="nav-item" onclick="scrollToSection('#ch5-latches')">SR & D Latches</a>
+      <a class="nav-item" onclick="scrollToSection('#ch5-flipflops')">Flip-Flops (D, JK, T)</a>
+      <a class="nav-item" onclick="scrollToSection('#ch5-analysis')">Sequential Analysis</a>
+      <a class="nav-item" onclick="scrollToSection('#ch5-design')">Sequential Design</a>
+      <a class="nav-item" onclick="scrollToSection('#ch6-registers')">Registers & Shift Registers</a>
+      <a class="nav-item" onclick="scrollToSection('#ch6-counters')">Ripple & Synchronous Counters</a>
+      <a class="nav-item" onclick="scrollToSection('#ch6-other')">Ring & Johnson Counters</a>
+      <a class="nav-item" onclick="scrollToSection('#ch7-ram')">RAM & ROM Architecture</a>
+      <a class="nav-item" onclick="scrollToSection('#ch7-pld')">PLA, PAL & FPGA Logic</a>
     </div>
   </aside>
 
@@ -3223,12 +3250,2144 @@ F = &Sigma; m(1, 2, 3, 5, 7)</div>
       </details>
     </div> <!-- END CH3 -->
 
-    <!-- FOOTER SECTION (WITHOUT CLOSING MAIN, BODY, HTML TAGS) -->
-    <div style="padding: 40px 50px; border-top: 1px solid var(--border); text-align: center;">
-      <p style="color: var(--text-dim); font-size: 13px; font-family: var(--font-mono)">
-        CSE 210 · Digital Logic Design Study Guide · Part 1: Chapters 1–3
+    <!-- =========================================================================
+         CHAPTER 4: COMBINATIONAL LOGIC
+         ========================================================================= -->
+    <div class="chapter-section" id="ch4">
+      <div class="chapter-title">
+        <span class="badge">CH 4</span>
+        <h2>Combinational Logic</h2>
+      </div>
+
+      <!-- 4.1 Introduction -->
+      <details id="ch4-intro" open>
+        <summary>
+          <span class="topic-icon">⚙️</span>
+          4.1 — Introduction to Combinational Circuits
+        </summary>
+        <div class="details-body">
+          <div class="callout def">
+            <div class="callout-title">Combinational Circuit Definition</div>
+            <p>A <strong>combinational circuit</strong> consists of logic gates whose outputs at any time are determined directly from the present combination of inputs. It has <strong>no memory</strong> and <strong>no feedback loops</strong>. If the inputs change, the outputs respond after a propagation delay through the gates.</p>
+          </div>
+
+          <h3>Block Diagram Representation</h3>
+          <p>The general structure of a combinational circuit with \(n\) input variables and \(m\) output variables is shown below. Feedback paths from output to input are strictly prohibited:</p>
+
+          <!-- SVG: Combinational Circuit General Block Diagram -->
+          <div class="svg-wrap">
+            <svg viewBox="0 0 450 160" width="450" height="160" xmlns="http://www.w3.org/2000/svg">
+              <!-- Inputs -->
+              <line x1="20" y1="50" x2="120" y2="50" class="wire"/>
+              <line x1="20" y1="80" x2="120" y2="80" class="wire"/>
+              <line x1="20" y1="110" x2="120" y2="110" class="wire"/>
+              <circle cx="70" cy="74" r="2" fill="var(--wire-cyan)"/>
+              <circle cx="70" cy="80" r="2" fill="var(--wire-cyan)"/>
+              <circle cx="70" cy="86" r="2" fill="var(--wire-cyan)"/>
+              <text x="15" y="44" class="input-label">n Inputs</text>
+
+              <!-- Central Block -->
+              <rect x="120" y="30" width="200" height="100" fill="var(--bg-card)" stroke="var(--gate-amber)" stroke-width="3" rx="8"/>
+              <text x="148" y="75" fill="var(--text-primary)" font-weight="bold" font-size="14px">Combinational</text>
+              <text x="185" y="95" fill="var(--text-primary)" font-weight="bold" font-size="14px">Logic</text>
+
+              <!-- Outputs -->
+              <line x1="320" y1="50" x2="420" y2="50" class="wire"/>
+              <line x1="320" y1="80" x2="420" y2="80" class="wire"/>
+              <line x1="320" y1="110" x2="420" y2="110" class="wire"/>
+              <circle cx="370" cy="74" r="2" fill="var(--wire-cyan)"/>
+              <circle cx="370" cy="80" r="2" fill="var(--wire-cyan)"/>
+              <circle cx="370" cy="86" r="2" fill="var(--wire-cyan)"/>
+              <text x="360" y="44" class="output-label">m Outputs</text>
+
+              <!-- Blocked Feedback Path -->
+              <path d="M 370 110 L 370 145 L 70 145 L 70 110" stroke="var(--accent-pink)" stroke-dasharray="4,4" stroke-width="2" fill="none"/>
+              <line x1="210" y1="135" x2="230" y2="155" stroke="var(--accent-pink)" stroke-width="3"/>
+              <line x1="230" y1="135" x2="210" y2="155" stroke="var(--accent-pink)" stroke-width="3"/>
+              <text x="245" y="150" fill="var(--accent-pink)" font-size="11px" font-weight="bold">NO FEEDBACK</text>
+            </svg>
+          </div>
+        </div>
+      </details>
+
+      <!-- 4.2 Analysis Procedure -->
+      <details id="ch4-analysis">
+        <summary>
+          <span class="topic-icon">🔍</span>
+          4.2 — Analysis Procedure & Homework 4.1 Solution
+        </summary>
+        <div class="details-body">
+          <p>Analyzing a combinational circuit involves determining the Boolean functions or the truth table that describes its operation.</p>
+
+          <h3>Methodology</h3>
+          <ol>
+            <li>Label all gate outputs that are functions of input variables.</li>
+            <li>Obtain the Boolean functions for these intermediate gates in terms of input variables.</li>
+            <li>Proceed to label outputs of next-level gates and express them algebraically.</li>
+            <li>Repeat until the final output functions are determined in terms of primary inputs.</li>
+          </ol>
+
+          <div class="callout theorem">
+            <div class="callout-title">Morris Mano Problem 4.1 Analysis</div>
+            <p>Determine the Boolean expressions for the outputs \(F_1\) and \(F_2\) of the circuit shown in Figure P4.1 (Chapter 4 slide 12).</p>
+            
+            <p><strong>Step 1: Write down intermediate equations</strong></p>
+            <div class="math-block">T<sub>1</sub> = B'C
+T<sub>2</sub> = A'B
+T<sub>3</sub> = A + T<sub>1</sub> = A + B'C
+T<sub>4</sub> = D &oplus; T<sub>2</sub> = D &oplus; (A'B) = (A'B)D' + (A'B)'D
+   = A'BD' + (A + B')D = A'BD' + AD + B'D
+   = A'BD' + AD + B'D  (simplifies to: AD + B'D + A'BD' = AD + B'D + BD')</div>
+            
+            <p><strong>Step 2: Write final outputs</strong></p>
+            <div class="math-block">F<sub>1</sub> = T<sub>3</sub> + T<sub>4</sub> = (A + B'C) + (AD + B'D + BD')
+   = A(1 + D) + B'C + B'D + BD'
+   = A + B'C + B'D + BD' = A + B'C + D(B' + B') + BD'
+   = A + B'C + B'D + BD' = A + B'C + B'D + BD' &rarr; A + B'C + BD' + B'D
+   (Note: B'D + BD' is B &oplus; D, so F<sub>1</sub> = A + B'C + B &oplus; D)
+
+F<sub>2</sub> = T<sub>2</sub> + D' = A'B + D'</div>
+          </div>
+
+          <h3>Morris Mano Problem 4.1 Truth Table</h3>
+          <p>Evaluating all 16 input combinations for \(T_1\) through \(T_4\) and outputs \(F_1\) and \(F_2\):</p>
+          
+          <div class="table-wrap">
+            <table class="truth-table">
+              <thead>
+                <tr>
+                  <th>A</th><th>B</th><th>C</th><th>D</th>
+                  <th>T<sub>1</sub></th><th>T<sub>2</sub></th><th>T<sub>3</sub></th><th>T<sub>4</sub></th>
+                  <th class="out">F<sub>1</sub></th><th class="out">F<sub>2</sub></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>0</td><td>0</td><td>0</td><td>0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="out zero">0</td><td class="out one">1</td></tr>
+                <tr><td>0</td><td>0</td><td>0</td><td>1</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="one">1</td><td class="out one">1</td><td class="out zero">0</td></tr>
+                <tr><td>0</td><td>0</td><td>1</td><td>0</td><td class="one">1</td><td class="zero">0</td><td class="one">1</td><td class="zero">0</td><td class="out one">1</td><td class="out one">1</td></tr>
+                <tr><td>0</td><td>0</td><td>1</td><td>1</td><td class="one">1</td><td class="zero">0</td><td class="one">1</td><td class="one">1</td><td class="out one">1</td><td class="out zero">0</td></tr>
+                <tr><td>0</td><td>1</td><td>0</td><td>0</td><td class="zero">0</td><td class="one">1</td><td class="zero">0</td><td class="one">1</td><td class="out one">1</td><td class="out one">1</td></tr>
+                <tr><td>0</td><td>1</td><td>0</td><td>1</td><td class="zero">0</td><td class="one">1</td><td class="zero">0</td><td class="zero">0</td><td class="out zero">0</td><td class="out one">1</td></tr>
+                <tr><td>0</td><td>1</td><td>1</td><td>0</td><td class="zero">0</td><td class="one">1</td><td class="zero">0</td><td class="one">1</td><td class="out one">1</td><td class="out one">1</td></tr>
+                <tr><td>0</td><td>1</td><td>1</td><td>1</td><td class="zero">0</td><td class="one">1</td><td class="zero">0</td><td class="zero">0</td><td class="out zero">0</td><td class="out one">1</td></tr>
+                <tr><td>1</td><td>0</td><td>0</td><td>0</td><td class="zero">0</td><td class="zero">0</td><td class="one">1</td><td class="zero">0</td><td class="out one">1</td><td class="out one">1</td></tr>
+                <tr><td>1</td><td>0</td><td>0</td><td>1</td><td class="zero">0</td><td class="zero">0</td><td class="one">1</td><td class="one">1</td><td class="out one">1</td><td class="out zero">0</td></tr>
+                <tr><td>1</td><td>0</td><td>1</td><td>0</td><td class="one">1</td><td class="zero">0</td><td class="one">1</td><td class="zero">0</td><td class="out one">1</td><td class="out one">1</td></tr>
+                <tr><td>1</td><td>0</td><td>1</td><td>1</td><td class="one">1</td><td class="zero">0</td><td class="one">1</td><td class="one">1</td><td class="out one">1</td><td class="out zero">0</td></tr>
+                <tr><td>1</td><td>1</td><td>0</td><td>0</td><td class="zero">0</td><td class="zero">0</td><td class="one">1</td><td class="zero">0</td><td class="out one">1</td><td class="out one">1</td></tr>
+                <tr><td>1</td><td>1</td><td>0</td><td>1</td><td class="zero">0</td><td class="zero">0</td><td class="one">1</td><td class="one">1</td><td class="out one">1</td><td class="out zero">0</td></tr>
+                <tr><td>1</td><td>1</td><td>1</td><td>0</td><td class="zero">0</td><td class="zero">0</td><td class="one">1</td><td class="zero">0</td><td class="out one">1</td><td class="out one">1</td></tr>
+                <tr><td>1</td><td>1</td><td>1</td><td>1</td><td class="zero">0</td><td class="zero">0</td><td class="one">1</td><td class="one">1</td><td class="out one">1</td><td class="out zero">0</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </details>
+
+      <!-- 4.3 Design Procedure -->
+      <details id="ch4-design">
+        <summary>
+          <span class="topic-icon">✍️</span>
+          4.3 — Design Procedure & Three Problems
+        </summary>
+        <div class="details-body">
+          <p>Designing a combinational circuit begins with a verbal specification of the problem and ends with a finalized logic circuit diagram.</p>
+
+          <h3>Design Steps</h3>
+          <ol>
+            <li>Identify the number of available input variables and required output variables.</li>
+            <li>Derive the truth table defining the relationship between inputs and outputs.</li>
+            <li>Obtain simplified Boolean functions for each output using K-maps or algebra.</li>
+            <li>Draw the logic diagram and verify correctness.</li>
+          </ol>
+
+          <div class="callout example">
+            <div class="callout-title">Design Problem 1: 3 Inputs, 1 Output. Output = 1 if Input value &lt; 3 or &gt; 6.</div>
+            <p>Let inputs be \(A, B, C\) (representing integers 0 to 7) and output be \(F\).</p>
+            <div class="math-block">Inputs:
+  0 (000) &rarr; F = 1
+  1 (001) &rarr; F = 1
+  2 (010) &rarr; F = 1
+  3-6     &rarr; F = 0
+  7 (111) &rarr; F = 1
+
+Function sum of minterms: F(A, B, C) = &Sigma; m(0, 1, 2, 7)</div>
+
+            <p><strong>K-map simplification:</strong></p>
+            <div class="kmap-wrap">
+              <table class="kmap">
+                <thead>
+                  <tr><th>A \ BC</th><th>00</th><th>01</th><th>11</th><th>10</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th>0</th>
+                    <td class="k1 g-red"><span class="cell-idx">0</span>1</td>
+                    <td class="k1 g-red"><span class="cell-idx">1</span>1</td>
+                    <td class="k0"><span class="cell-idx">3</span>0</td>
+                    <td class="k1 g-blue"><span class="cell-idx">2</span>1</td>
+                  </tr>
+                  <tr>
+                    <th>1</th>
+                    <td class="k0"><span class="cell-idx">4</span>0</td>
+                    <td class="k0"><span class="cell-idx">5</span>0</td>
+                    <td class="k1 g-green"><span class="cell-idx">7</span>1</td>
+                    <td class="k0"><span class="cell-idx">6</span>0</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <ul>
+              <li><strong>Group 1 (Red):</strong> cells \(m_0, m_1\) &rarr; \(A'B'\).</li>
+              <li><strong>Group 2 (Blue):</strong> cells \(m_2\) &rarr; adjacent to \(m_0\) wrap around? \(m_0, m_2\) &rarr; \(A'C'\).</li>
+              <li><strong>Group 3 (Green):</strong> cell \(m_7\) &rarr; no adjacent 1s. Single cell term: \(ABC\).</li>
+            </ul>
+            <p><strong>Resulting function:</strong> \(F = A'B' + A'C' + ABC\).</p>
+          </div>
+
+          <div class="callout example">
+            <div class="callout-title">Design Problem 2: 3-bit Binary-to-Excess 3 Code Converter</div>
+            <p>Let input binary variables be \(A, B, C\) and output variables be \(W, X, Y, Z\). Excess-3 output is input value \(+3\).</p>
+            <div class="table-wrap">
+              <table class="truth-table">
+                <thead>
+                  <tr><th>A</th><th>B</th><th>C</th><th>Decimal</th><th>W</th><th>X</th><th>Y</th><th>Z</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>0</td><td>0</td><td>0</td><td>0 (+3 = 3)</td><td class="zero">0</td><td class="zero">0</td><td class="one">1</td><td class="one">1</td></tr>
+                  <tr><td>0</td><td>0</td><td>1</td><td>1 (+3 = 4)</td><td class="zero">0</td><td class="one">1</td><td class="zero">0</td><td class="zero">0</td></tr>
+                  <tr><td>0</td><td>1</td><td>0</td><td>2 (+3 = 5)</td><td class="zero">0</td><td class="one">1</td><td class="zero">0</td><td class="one">1</td></tr>
+                  <tr><td>0</td><td>1</td><td>1</td><td>3 (+3 = 6)</td><td class="zero">0</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td></tr>
+                  <tr><td>1</td><td>0</td><td>0</td><td>4 (+3 = 7)</td><td class="one">1</td><td class="one">1</td><td class="one">1</td><td class="one">1</td></tr>
+                  <tr><td>1</td><td>0</td><td>1</td><td>5 (+3 = 8)</td><td class="one">1</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td></tr>
+                  <tr><td>1</td><td>1</td><td>0</td><td>6 (+3 = 9)</td><td class="one">1</td><td class="zero">0</td><td class="zero">0</td><td class="one">1</td></tr>
+                  <tr><td>1</td><td>1</td><td>1</td><td>7 (+3=10)</td><td class="one">1</td><td class="zero">0</td><td class="one">1</td><td class="zero">0</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p><strong>Simplified Boolean Equations:</strong></p>
+            <div class="math-block">W = A + BC
+X = A'B + A'C + AB'C' = A'(B + C) + AB'C'
+Y = B &oplus; C = BC' + B'C
+Z = C'</div>
+          </div>
+
+          <div class="callout example">
+            <div class="callout-title">Design Problem 3: 3-bit 1's Complementer Circuit</div>
+            <p>Given 3-bit input \(A, B, C\), the outputs \(X, Y, Z\) must represent the 1's complement (bitwise inversion):</p>
+            <div class="math-block">X = A'
+Y = B'
+Z = C'</div>
+            <p>This is implemented using three parallel NOT gates.</p>
+          </div>
+        </div>
+      </details>
+
+      <!-- 4.4 Binary Adder-Subtractor -->
+      <details id="ch4-adders">
+        <summary>
+          <span class="topic-icon">➕</span>
+          4.4 — Adders & Subtractors (Half, Full, 4-bit)
+        </summary>
+        <div class="details-body">
+          <p>Adders are fundamental arithmetic structures in CPU Arithmetic Logic Units (ALUs).</p>
+
+          <h3>1. Half-Adder</h3>
+          <p>Adds two single bits \(x\) and \(y\), producing Sum (\(S\)) and Carry (\(C\)).</p>
+          <div class="math-block">S = x &oplus; y = x'y + xy'
+C = x &middot; y</div>
+
+          <!-- SVG: Half Adder Logic Diagram -->
+          <div class="svg-wrap">
+            <svg viewBox="0 0 320 120" width="320" height="120" xmlns="http://www.w3.org/2000/svg">
+              <line x1="20" y1="35" x2="100" y2="35" class="wire"/>
+              <line x1="20" y1="75" x2="100" y2="75" class="wire"/>
+              
+              <!-- XOR Gate -->
+              <path d="M92,20 Q107,45 92,70" style="fill:none; stroke: var(--wire-cyan); stroke-width:2.5"/>
+              <path d="M100,20 Q120,45 100,70 L130,70 Q165,70 165,45 Q165,20 130,20 Z" class="gate-body-xor"/>
+              <path d="M100,20 Q112,45 100,70" style="fill:none; stroke: var(--wire-green); stroke-width:2"/>
+              <line x1="165" y1="45" x2="280" y2="45" class="wire"/>
+              
+              <!-- AND Gate -->
+              <line x1="40" y1="35" x2="40" y2="95" class="wire"/>
+              <line x1="40" y1="95" x2="100" y2="95" class="wire"/>
+              <line x1="60" y1="75" x2="60" y2="110" class="wire"/>
+              <line x1="60" y1="110" x2="100" y2="110" class="wire"/>
+              <circle cx="40" cy="35" r="3" fill="var(--wire-cyan)"/>
+              <circle cx="60" cy="75" r="3" fill="var(--wire-cyan)"/>
+
+              <path d="M100,85 L100,120 L120,120 Q145,120 145,102.5 Q145,85 120,85 Z" class="gate-body"/>
+              <line x1="145" y1="102.5" x2="280" y2="102.5" class="wire"/>
+
+              <text x="10" y="39" class="input-label">x</text>
+              <text x="10" y="79" class="input-label">y</text>
+              <text x="265" y="40" class="output-label">S</text>
+              <text x="265" y="97" class="output-label">C</text>
+            </svg>
+          </div>
+
+          <h3>2. Full-Adder</h3>
+          <p>Adds three bits: \(x\), \(y\), and a carry input \(z\) (or \(C_{\text{in}}\)), producing Sum (\(S\)) and Carry Out (\(C\)).</p>
+          <div class="math-block">S = x &oplus; y &oplus; z
+C = xy + xz + yz = xy + z(x &oplus; y)</div>
+
+          <!-- SVG: Full Adder using 2 Half Adders -->
+          <div class="svg-wrap">
+            <svg viewBox="0 0 540 180" width="540" height="180" xmlns="http://www.w3.org/2000/svg">
+              <text x="10" y="20" fill="var(--wire-cyan)" font-weight="bold">Full Adder via 2 Half Adders</text>
+              
+              <!-- HA 1 Block -->
+              <rect x="70" y="40" width="100" height="80" fill="var(--bg-card)" stroke="var(--gate-amber)" stroke-width="2.5" rx="6"/>
+              <text x="110" y="85" fill="#fff" font-weight="bold">HA 1</text>
+              
+              <!-- HA 2 Block -->
+              <rect x="250" y="40" width="100" height="80" fill="var(--bg-card)" stroke="var(--gate-amber)" stroke-width="2.5" rx="6"/>
+              <text x="290" y="85" fill="#fff" font-weight="bold">HA 2</text>
+              
+              <!-- Connections -->
+              <line x1="20" y1="60" x2="70" y2="60" class="wire"/>
+              <line x1="20" y1="100" x2="70" y2="100" class="wire"/>
+              <text x="10" y="64" class="input-label">x</text>
+              <text x="10" y="104" class="input-label">y</text>
+
+              <!-- HA1 sum to HA2 input -->
+              <line x1="170" y1="60" x2="250" y2="60" class="wire"/>
+              <!-- carry in z to HA2 input -->
+              <line x1="20" y1="140" x2="210" y2="140" class="wire"/>
+              <line x1="210" y1="140" x2="210" y2="100" class="wire"/>
+              <line x1="210" y1="100" x2="250" y2="100" class="wire"/>
+              <text x="10" y="144" class="input-label">z</text>
+
+              <!-- HA2 sum out -->
+              <line x1="350" y1="60" x2="480" y2="60" class="wire"/>
+              <text x="490" y="64" class="output-label">S</text>
+
+              <!-- Carry routing to OR gate -->
+              <line x1="170" y1="100" x2="400" y2="100" class="wire"/>
+              <line x1="350" y1="100" x2="380" y2="100" class="wire"/>
+              <line x1="380" y1="100" x2="380" y2="130" class="wire"/>
+              <line x1="380" y1="130" x2="400" y2="130" class="wire"/>
+
+              <!-- OR Gate -->
+              <path d="M400,90 Q415,115 400,140 L420,140 Q455,140 455,115 Q455,90 420,90 Z" class="gate-body" style="stroke: var(--wire-green)"/>
+              <path d="M400,90 Q410,115 400,140" style="fill:none; stroke: var(--wire-green); stroke-width:2"/>
+              <line x1="455" y1="115" x2="510" y2="115" class="wire"/>
+              <text x="515" y="119" class="output-label">C</text>
+            </svg>
+          </div>
+
+          <h3>3. 4-bit Binary Adder-Subtractor</h3>
+          <p>By using XOR gates as programmable inverters, a single ripple-carry structure can perform addition or subtraction depending on control line \(M\):</p>
+          <ul>
+            <li><strong>When \(M = 0\):</strong> \(B \oplus 0 = B\), \(C_{\text{in}} = 0\). The circuit performs <strong>\(A + B\)</strong>.</li>
+            <li><strong>When \(M = 1\):</strong> \(B \oplus 1 = B'\), \(C_{\text{in}} = 1\). The circuit performs <strong>\(A + B' + 1\)</strong> (2's complement subtraction).</li>
+          </ul>
+
+          <!-- SVG: 4-bit Binary Adder Subtractor -->
+          <div class="svg-wrap">
+            <svg viewBox="0 0 600 240" width="600" height="240" xmlns="http://www.w3.org/2000/svg">
+              <!-- Mode Line M -->
+              <line x1="20" y1="20" x2="530" y2="20" class="wire" style="stroke: var(--accent-pink)"/>
+              <text x="15" y="15" fill="var(--accent-pink)" font-weight="bold">M (Mode)</text>
+              
+              <!-- 4 FA Blocks -->
+              <!-- Block FA 0 -->
+              <rect x="440" y="100" width="70" height="90" fill="var(--bg-card)" stroke="var(--gate-amber)" stroke-width="2" rx="4"/>
+              <text x="465" y="145" fill="#fff" font-weight="bold">FA 0</text>
+              <!-- Block FA 1 -->
+              <rect x="310" y="100" width="70" height="90" fill="var(--bg-card)" stroke="var(--gate-amber)" stroke-width="2" rx="4"/>
+              <text x="335" y="145" fill="#fff" font-weight="bold">FA 1</text>
+              <!-- Block FA 2 -->
+              <rect x="180" y="100" width="70" height="90" fill="var(--bg-card)" stroke="var(--gate-amber)" stroke-width="2" rx="4"/>
+              <text x="205" y="145" fill="#fff" font-weight="bold">FA 2</text>
+              <!-- Block FA 3 -->
+              <rect x="50" y="100" width="70" height="90" fill="var(--bg-card)" stroke="var(--gate-amber)" stroke-width="2" rx="4"/>
+              <text x="75" y="145" fill="#fff" font-weight="bold">FA 3</text>
+
+              <!-- Carry Routing -->
+              <line x1="530" y1="20" x2="530" y2="145" class="wire" style="stroke: var(--accent-pink)"/>
+              <line x1="530" y1="145" x2="510" y2="145" class="wire" style="stroke: var(--accent-pink)"/>
+              <text x="515" y="138" fill="var(--accent-pink)">C<sub>0</sub></text>
+
+              <line x1="440" y1="145" x2="380" y2="145" class="wire"/>
+              <line x1="310" y1="145" x2="250" y2="145" class="wire"/>
+              <line x1="180" y1="145" x2="120" y2="145" class="wire"/>
+              <line x1="50" y1="145" x2="10" y2="145" class="wire"/>
+              <text x="15" y="138" class="output-label">C<sub>4</sub></text>
+
+              <!-- Inputs A -->
+              <line x1="495" y1="70" x2="495" y2="100" class="wire"/>
+              <text x="490" y="65" class="input-label">A<sub>0</sub></text>
+              <line x1="365" y1="70" x2="365" y2="100" class="wire"/>
+              <text x="360" y="65" class="input-label">A<sub>1</sub></text>
+              <line x1="235" y1="70" x2="235" y2="100" class="wire"/>
+              <text x="230" y="65" class="input-label">A<sub>2</sub></text>
+              <line x1="105" y1="70" x2="105" y2="100" class="wire"/>
+              <text x="100" y="65" class="input-label">A<sub>3</sub></text>
+
+              <!-- XOR Gate 0 -->
+              <line x1="455" y1="50" x2="455" y2="100" class="wire"/>
+              <circle cx="455" cy="20" r="3" fill="var(--accent-pink)"/>
+              <line x1="455" y1="20" x2="455" y2="35" class="wire" style="stroke: var(--accent-pink)"/>
+              <text x="420" y="44" class="input-label">B<sub>0</sub></text>
+              
+              <!-- Sum Outputs -->
+              <line x1="475" y1="190" x2="475" y2="220" class="wire"/>
+              <text x="470" y="235" class="output-label">S<sub>0</sub></text>
+              <line x1="345" y1="190" x2="345" y2="220" class="wire"/>
+              <text x="340" y="235" class="output-label">S<sub>1</sub></text>
+              <line x1="215" y1="190" x2="215" y2="220" class="wire"/>
+              <text x="210" y="235" class="output-label">S<sub>2</sub></text>
+              <line x1="85" y1="190" x2="85" y2="220" class="wire"/>
+              <text x="80" y="235" class="output-label">S<sub>3</sub></text>
+            </svg>
+          </div>
+        </div>
+      </details>
+
+      <!-- 4.5 Decimal Adder -->
+      <details id="ch4-bcd">
+        <summary>
+          <span class="topic-icon">🔢</span>
+          4.5 — BCD Adder (Decimal Adder)
+        </summary>
+        <div class="details-body">
+          <p>A BCD adder adds two 4-bit BCD numbers. If the binary sum exceeds 9 (\(1001_2\)), an invalid code is detected, and a correction factor of <code>0110</code> (6) is added to the sum using a second 4-bit adder stage.</p>
+
+          <h3>BCD Correction Detection Logic</h3>
+          <p>Let the intermediate binary sum outputs be \(S_3, S_2, S_1, S_0\) and the carry output be \(K\). The correction signal \(C_{\text{out}}\) is active when:</p>
+          <div class="math-block">C<sub>out</sub> = K + S<sub>3</sub>S<sub>2</sub> + S<sub>3</sub>S<sub>1</sub></div>
+          <p>When \(C_{\text{out}} = 1\), the binary code <code>0110</code> is added to the intermediate sum.</p>
+        </div>
+      </details>
+
+      <!-- 4.6 Decoders -->
+      <details id="ch4-decoders">
+        <summary>
+          <span class="topic-icon">🔌</span>
+          4.6 — Decoders & Encoders
+        </summary>
+        <div class="details-body">
+          <p>Decoders convert \(n\) inputs to a maximum of \(2^n\) unique outputs. Encoders perform the inverse operation.</p>
+
+          <h3>1. 2-to-4 Decoder (with Enable control)</h3>
+          <p>When Enable \(E = 0\), all outputs are \(0\). When \(E = 1\), the active output corresponds to the binary value of inputs \(I_1, I_0\).</p>
+
+          <div class="table-wrap">
+            <table class="truth-table">
+              <thead>
+                <tr><th>E</th><th>I<sub>1</sub></th><th>I<sub>0</sub></th><th>Y<sub>3</sub></th><th>Y<sub>2</sub></th><th>Y<sub>1</sub></th><th>Y<sub>0</sub></th></tr>
+              </thead>
+              <tbody>
+                <tr><td>0</td><td>X</td><td>X</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td></tr>
+                <tr><td>1</td><td>0</td><td>0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="one">1</td></tr>
+                <tr><td>1</td><td>0</td><td>1</td><td class="zero">0</td><td class="zero">0</td><td class="one">1</td><td class="zero">0</td></tr>
+                <tr><td>1</td><td>1</td><td>0</td><td class="zero">0</td><td class="one">1</td><td class="zero">0</td><td class="zero">0</td></tr>
+                <tr><td>1</td><td>1</td><td>1</td><td class="one">1</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- SVG: 2-to-4 Decoder Schematic -->
+          <div class="svg-wrap">
+            <svg viewBox="0 0 350 200" width="350" height="200" xmlns="http://www.w3.org/2000/svg">
+              <text x="10" y="20" fill="var(--wire-cyan)" font-weight="bold">2-to-4 Decoder Circuit</text>
+              <!-- Inputs -->
+              <line x1="20" y1="60" x2="100" y2="60" class="wire"/>
+              <line x1="20" y1="100" x2="100" y2="100" class="wire"/>
+              <line x1="20" y1="140" x2="100" y2="140" class="wire"/>
+              <text x="10" y="55" class="input-label">I<sub>1</sub></text>
+              <text x="10" y="95" class="input-label">I<sub>0</sub></text>
+              <text x="10" y="135" class="input-label">E (Enable)</text>
+
+              <!-- Decoder Block -->
+              <rect x="100" y="40" width="130" height="120" fill="var(--bg-card)" stroke="var(--gate-amber)" stroke-width="2.5" rx="6"/>
+              <text x="120" y="105" fill="#fff" font-weight="bold">Decoder</text>
+              
+              <!-- Outputs -->
+              <line x1="230" y1="60" x2="300" y2="60" class="wire"/>
+              <line x1="230" y1="85" x2="300" y2="85" class="wire"/>
+              <line x1="230" y1="115" x2="300" y2="115" class="wire"/>
+              <line x1="230" y1="140" x2="300" y2="140" class="wire"/>
+              
+              <text x="310" y="64" class="output-label">Y<sub>3</sub></text>
+              <text x="310" y="89" class="output-label">Y<sub>2</sub></text>
+              <text x="310" y="119" class="output-label">Y<sub>1</sub></text>
+              <text x="310" y="144" class="output-label">Y<sub>0</sub></text>
+            </svg>
+          </div>
+
+          <h3>2. 3-to-8 Decoder</h3>
+          <p>Converts 3 input variables \(I_2, I_1, I_0\) into 8 output lines \(Y_0\) to \(Y_7\).</p>
+
+          <!-- SVG: 3-to-8 Decoder Schematic -->
+          <div class="svg-wrap">
+            <svg viewBox="0 0 350 240" width="350" height="240" xmlns="http://www.w3.org/2000/svg">
+              <text x="10" y="20" fill="var(--wire-cyan)" font-weight="bold">3-to-8 Decoder Block</text>
+              <rect x="100" y="30" width="130" height="180" fill="var(--bg-card)" stroke="var(--gate-amber)" stroke-width="2.5" rx="6"/>
+              <text x="130" y="125" fill="#fff" font-weight="bold">3-to-8</text>
+              
+              <line x1="20" y1="60" x2="100" y2="60" class="wire"/>
+              <line x1="20" y1="120" x2="100" y2="120" class="wire"/>
+              <line x1="20" y1="180" x2="100" y2="180" class="wire"/>
+              
+              <text x="10" y="55" class="input-label">I<sub>2</sub></text>
+              <text x="10" y="115" class="input-label">I<sub>1</sub></text>
+              <text x="10" y="175" class="input-label">I<sub>0</sub></text>
+
+              <line x1="230" y1="45" x2="300" y2="45" class="wire"/><text x="305" y="49" class="output-label">Y<sub>7</sub></text>
+              <line x1="230" y1="70" x2="300" y2="70" class="wire"/><text x="305" y="74" class="output-label">Y<sub>6</sub></text>
+              <line x1="230" y1="95" x2="300" y2="95" class="wire"/><text x="305" y="99" class="output-label">Y<sub>5</sub></text>
+              <line x1="230" y1="120" x2="300" y2="120" class="wire"/><text x="305" y="124" class="output-label">Y<sub>4</sub></text>
+              <line x1="230" y1="145" x2="300" y2="145" class="wire"/><text x="305" y="149" class="output-label">Y<sub>3</sub></text>
+              <line x1="230" y1="170" x2="300" y2="170" class="wire"/><text x="305" y="174" class="output-label">Y<sub>2</sub></text>
+              <line x1="230" y1="195" x2="300" y2="195" class="wire"/><text x="305" y="199" class="output-label">Y<sub>1</sub></text>
+              <line x1="230" y1="210" x2="300" y2="210" class="wire"/><text x="305" y="214" class="output-label">Y<sub>0</sub></text>
+            </svg>
+          </div>
+
+          <h3>3. Full Adder Implementation using a Decoder</h3>
+          <p>Any combinational circuit can be constructed using a decoder and external OR gates. A Full Adder has: \(S = \Sigma(1, 2, 4, 7)\) and \(C = \Sigma(3, 5, 6, 7)\). We connect these outputs of a 3-to-8 decoder to two OR gates.</p>
+
+          <!-- SVG: Full Adder via 3-to-8 Decoder -->
+          <div class="svg-wrap">
+            <svg viewBox="0 0 500 240" width="500" height="240" xmlns="http://www.w3.org/2000/svg">
+              <text x="10" y="20" fill="var(--wire-cyan)" font-weight="bold">Full Adder implemented using 3-to-8 Decoder</text>
+              <!-- Decoder -->
+              <rect x="70" y="40" width="100" height="180" fill="var(--bg-card)" stroke="var(--gate-amber)" stroke-width="2.5" rx="6"/>
+              <text x="100" y="130" fill="#fff" font-weight="bold">3-to-8</text>
+              <line x1="20" y1="70" x2="70" y2="70" class="wire"/><text x="10" y="65" class="input-label">x</text>
+              <line x1="20" y1="130" x2="70" y2="130" class="wire"/><text x="10" y="125" class="input-label">y</text>
+              <line x1="20" y1="190" x2="70" y2="190" class="wire"/><text x="10" y="185" class="input-label">z</text>
+
+              <!-- Output Lines -->
+              <line x1="170" y1="60" x2="300" y2="60" class="wire"/><text x="180" y="55" font-size="10px">1</text>
+              <line x1="170" y1="80" x2="300" y2="80" class="wire"/><text x="180" y="75" font-size="10px">2</text>
+              <line x1="170" y1="100" x2="300" y2="100" class="wire"/><text x="180" y="95" font-size="10px">3</text>
+              <line x1="170" y1="120" x2="300" y2="120" class="wire"/><text x="180" y="115" font-size="10px">4</text>
+              <line x1="170" y1="140" x2="300" y2="140" class="wire"/><text x="180" y="135" font-size="10px">5</text>
+              <line x1="170" y1="160" x2="300" y2="160" class="wire"/><text x="180" y="155" font-size="10px">6</text>
+              <line x1="170" y1="180" x2="300" y2="180" class="wire"/><text x="180" y="175" font-size="10px">7</text>
+
+              <!-- Connections to OR Gate 1 (Sum S) -->
+              <!-- Lines 1, 2, 4, 7 -->
+              <line x1="300" y1="60" x2="340" y2="60" class="wire"/>
+              <line x1="300" y1="80" x2="340" y2="80" class="wire"/>
+              <line x1="300" y1="120" x2="340" y2="120" class="wire"/>
+              <line x1="300" y1="180" x2="340" y2="180" class="wire"/>
+              <line x1="340" y1="60" x2="340" y2="105" class="wire"/>
+              <line x1="340" y1="180" x2="340" y2="125" class="wire"/>
+
+              <path d="M340,90 Q355,115 340,140 L370,140 Q405,140 405,115 Q405,90 370,90 Z" class="gate-body" style="stroke: var(--wire-green)"/>
+              <path d="M340,90 Q350,115 340,140" style="fill:none; stroke: var(--wire-green); stroke-width:2"/>
+              <line x1="405" y1="115" x2="450" y2="115" class="wire"/>
+              <text x="460" y="119" class="output-label">S</text>
+            </svg>
+          </div>
+
+          <h3>4. Encoders (4-to-2 Binary Encoder)</h3>
+          <p>Generates the binary code corresponding to the active input line. Only one input switch is allowed to be active at a time.</p>
+
+          <div class="table-wrap">
+            <table class="truth-table">
+              <thead>
+                <tr><th>x<sub>3</sub></th><th>x<sub>2</sub></th><th>x<sub>1</sub></th><th>x<sub>0</sub></th><th>y<sub>1</sub></th><th>y<sub>0</sub></th></tr>
+              </thead>
+              <tbody>
+                <tr><td>0</td><td>0</td><td>0</td><td>1</td><td class="zero">0</td><td class="zero">0</td></tr>
+                <tr><td>0</td><td>0</td><td>1</td><td>0</td><td class="zero">0</td><td class="one">1</td></tr>
+                <tr><td>0</td><td>1</td><td>0</td><td>0</td><td class="one">1</td><td class="zero">0</td></tr>
+                <tr><td>1</td><td>0</td><td>0</td><td>0</td><td class="one">1</td><td class="one">1</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- SVG: 4-to-2 Binary Encoder -->
+          <div class="svg-wrap">
+            <svg viewBox="0 0 350 160" width="350" height="160" xmlns="http://www.w3.org/2000/svg">
+              <text x="10" y="20" fill="var(--wire-cyan)" font-weight="bold">4-to-2 Binary Encoder</text>
+              <rect x="110" y="30" width="120" height="110" fill="var(--bg-card)" stroke="var(--gate-amber)" stroke-width="2.5" rx="6"/>
+              <text x="145" y="90" fill="#fff" font-weight="bold">Encoder</text>
+
+              <line x1="30" y1="50" x2="110" y2="50" class="wire"/><text x="15" y="44" class="input-label">x<sub>3</sub></text>
+              <line x1="30" y1="75" x2="110" y2="75" class="wire"/><text x="15" y="69" class="input-label">x<sub>2</sub></text>
+              <line x1="30" y1="100" x2="110" y2="100" class="wire"/><text x="15" y="94" class="input-label">x<sub>1</sub></text>
+              <line x1="30" y1="125" x2="110" y2="125" class="wire"/><text x="15" y="119" class="input-label">x<sub>0</sub></text>
+
+              <line x1="230" y1="65" x2="300" y2="65" class="wire"/><text x="305" y="69" class="output-label">y<sub>1</sub></text>
+              <line x1="230" y1="105" x2="300" y2="105" class="wire"/><text x="305" y="109" class="output-label">y<sub>0</sub></text>
+            </svg>
+          </div>
+        </div>
+      </details>
+
+      <!-- 4.7 Multiplexers -->
+      <details id="ch4-mux">
+        <summary>
+          <span class="topic-icon">🔀</span>
+          4.7 — Multiplexers (MUX) & Demultiplexers
+        </summary>
+        <div class="details-body">
+          <p>Multiplexers act as electronic selector switches, directing one of multiple analog/digital input lines to a single destination output based on select lines.</p>
+
+          <h3>4-to-1 Multiplexer</h3>
+          <p>Routes one of four inputs (\(I_0, I_1, I_2, I_3\)) to output \(Y\) using two select variables (\(S_1, S_0\)).</p>
+          <div class="math-block">Y = I<sub>0</sub>S<sub>1</sub>'S<sub>0</sub>' + I<sub>1</sub>S<sub>1</sub>'S<sub>0</sub> + I<sub>2</sub>S<sub>1</sub>S<sub>0</sub>' + I<sub>3</sub>S<sub>1</sub>S<sub>0</sub></div>
+
+          <!-- SVG: 4-to-1 MUX Schematic -->
+          <div class="svg-wrap">
+            <svg viewBox="0 0 350 200" width="350" height="200" xmlns="http://www.w3.org/2000/svg">
+              <text x="10" y="20" fill="var(--wire-cyan)" font-weight="bold">4-to-1 Multiplexer Block</text>
+              <!-- MUX Trapezoid -->
+              <polygon points="100,30 180,50 180,150 100,170" fill="var(--bg-card)" stroke="var(--gate-amber)" stroke-width="2.5"/>
+              <text x="125" y="105" fill="#fff" font-weight="bold">MUX</text>
+
+              <!-- Inputs -->
+              <line x1="30" y1="50" x2="110" y2="55" class="wire"/><text x="15" y="45" class="input-label">I<sub>0</sub></text>
+              <line x1="30" y1="80" x2="110" y2="80" class="wire"/><text x="15" y="75" class="input-label">I<sub>1</sub></text>
+              <line x1="30" y1="110" x2="110" y2="105" class="wire"/><text x="15" y="105" class="input-label">I<sub>2</sub></text>
+              <line x1="30" y1="140" x2="110" y2="135" class="wire"/><text x="15" y="135" class="input-label">I<sub>3</sub></text>
+
+              <!-- Select Inputs -->
+              <line x1="120" y1="165" x2="120" y2="190" class="wire" style="stroke: var(--accent-pink)"/>
+              <line x1="150" y1="157" x2="150" y2="190" class="wire" style="stroke: var(--accent-pink)"/>
+              <text x="110" y="200" fill="var(--accent-pink)">S<sub>1</sub></text>
+              <text x="145" y="200" fill="var(--accent-pink)">S<sub>0</sub></text>
+
+              <!-- Output -->
+              <line x1="180" y1="100" x2="280" y2="100" class="wire"/>
+              <text x="290" y="104" class="output-label">Y</text>
+            </svg>
+          </div>
+        </div>
+      </details>
+
+      <!-- 4.8 Exercises & Homework Solutions -->
+      <details id="ch4-exercises">
+        <summary>
+          <span class="topic-icon">📝</span>
+          4.8 — Exercises & Homework Solutions
+        </summary>
+        <div class="details-body">
+          <h3>Combinational Logic Design Exercises</h3>
+
+          <h4>Exercise 1: Design a BCD-to-Excess 3 converter.</h4>
+          <p>Refer to Section 4.3 (Design Problem 2). The derived truth table and simplified expressions show the exact conversion steps. BCD codes 10 to 15 (<code>1010</code> to <code>1111</code>) are treated as Don't-Care conditions (<code>X</code>) to simplify equations:</p>
+          <div class="math-block">w = A + BC + BD = A + B(C + D)
+x = B'C + B'D + BC'D' = B'(C + D) + BC'D'
+y = C &oplus; D = CD' + C'D
+z = D'</div>
+
+          <h4>Exercise 2: Implement F(x, y, z) = &Sigma;(1, 2, 6, 7) using a 4-to-1 Multiplexer.</h4>
+          <p>We choose \(x, y\) as select inputs \(S_1, S_0\). This leaves \(z\) as the data input:</p>
+          <div class="table-wrap">
+            <table class="truth-table">
+              <thead>
+                <tr><th>x</th><th>y</th><th>z</th><th>F</th><th>MUX Input Connection</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>0</td><td>0</td><td>0</td><td>0</td><td rowspan="2">F = z (I<sub>0</sub> = z)</td></tr>
+                <tr><td>0</td><td>0</td><td>1</td><td>1</td></tr>
+                <tr><td>0</td><td>1</td><td>0</td><td>1</td><td rowspan="2">F = z' (I<sub>1</sub> = z')</td></tr>
+                <tr><td>0</td><td>1</td><td>1</td><td>0</td></tr>
+                <tr><td>1</td><td>0</td><td>0</td><td>0</td><td rowspan="2">F = 0 (I<sub>2</sub> = 0)</td></tr>
+                <tr><td>1</td><td>0</td><td>1</td><td>0</td></tr>
+                <tr><td>1</td><td>1</td><td>0</td><td>1</td><td rowspan="2">F = 1 (I<sub>3</sub> = 1)</td></tr>
+                <tr><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p><strong>Resulting Connections:</strong> Connect Select lines \(S_1=x, S_0=y\). MUX data inputs: \(I_0 = z, I_1 = z', I_2 = 0, I_3 = 1\).</p>
+        </div>
+      </details>
+    </div> <!-- END CH4 -->
+
+    <!-- =========================================================================
+         CHAPTER 5: SEQUENTIAL LOGIC
+         ========================================================================= -->
+    <div class="chapter-section" id="ch5">
+      <div class="chapter-title">
+        <span class="badge">CH 5</span>
+        <h2>Sequential Logic</h2>
+      </div>
+
+      <!-- 5.1 Introduction -->
+      <details id="ch5-intro" open>
+        <summary>
+          <span class="topic-icon">⏱️</span>
+          5.1 — Latches vs. Flip-Flops & Clock Signals
+        </summary>
+        <div class="details-body">
+          <div class="callout def">
+            <div class="callout-title">Sequential Logic Definition</div>
+            <p>A <strong>sequential logic circuit</strong> contains storage elements (memory) in a feedback loop with combinational gates. Its outputs at any instant depend not only on the present inputs but also on the past state of the storage elements.</p>
+          </div>
+
+          <h3>Key Distinctions</h3>
+          <ul>
+            <li><strong>Latches:</strong> Temporary storage elements that operate based on signal <strong>voltage levels</strong>. They are transparent when enabled (meaning any changes in inputs immediately propagate to outputs).</li>
+            <li><strong>Flip-Flops:</strong> Synchronous storage elements that update outputs only at a discrete instant of a clock signal transition, or <strong>clock edge</strong> (positive/rising or negative/falling edge).</li>
+          </ul>
+
+          <h3>Clock Triggering Waveforms</h3>
+          <!-- SVG: Positive vs. Negative Clock Edges -->
+          <div class="svg-wrap">
+            <svg viewBox="0 0 450 120" width="450" height="120" xmlns="http://www.w3.org/2000/svg">
+              <path d="M 30 90 L 80 90 L 80 30 L 140 30 L 140 90 L 200 90 L 200 30 L 260 30 L 260 90 L 310 90" stroke="var(--wire-cyan)" stroke-width="2" fill="none"/>
+              <!-- Positive Edge Arrows (Upward) -->
+              <line x1="80" y1="90" x2="80" y2="40" stroke="var(--wire-green)" stroke-width="2.5"/>
+              <polygon points="77,50 83,50 80,40" fill="var(--wire-green)"/>
+              <line x1="200" y1="90" x2="200" y2="40" stroke="var(--wire-green)" stroke-width="2.5"/>
+              <polygon points="197,50 203,50 200,40" fill="var(--wire-green)"/>
+              <text x="60" y="25" fill="var(--wire-green)" font-size="10px">Positive Edge</text>
+
+              <!-- Negative Edge Arrows (Downward) -->
+              <line x1="140" y1="30" x2="140" y2="80" stroke="var(--accent-pink)" stroke-width="2.5"/>
+              <polygon points="137,70 143,70 140,80" fill="var(--accent-pink)"/>
+              <line x1="260" y1="30" x2="260" y2="80" stroke="var(--accent-pink)" stroke-width="2.5"/>
+              <polygon points="257,70 263,70 260,80" fill="var(--accent-pink)"/>
+              <text x="240" y="105" fill="var(--accent-pink)" font-size="10px">Negative Edge</text>
+            </svg>
+          </div>
+        </div>
+      </details>
+
+      <!-- 5.2 Storage Elements: Latches -->
+      <details id="ch5-latches">
+        <summary>
+          <span class="topic-icon">🔒</span>
+          5.2 — Latches (SR, Controlled SR, D Latch)
+        </summary>
+        <div class="details-body">
+          <p>Latches are the asynchronous structural components used to construct flip-flops.</p>
+
+          <h3>1. SR Latch (NOR Gate Variant)</h3>
+          <p>Consists of two cross-coupled NOR gates. The active-high inputs \(S\) (Set) and \(R\) (Reset) change outputs \(Q\) and \(Q'\).</p>
+
+          <!-- SVG: NOR SR Latch Logic Diagram -->
+          <div class="svg-wrap">
+            <svg viewBox="0 0 360 160" width="360" height="160" xmlns="http://www.w3.org/2000/svg">
+              <!-- Inputs -->
+              <line x1="20" y1="45" x2="120" y2="45" class="wire"/><text x="10" y="40" class="input-label">R (Reset)</text>
+              <line x1="20" y1="115" x2="120" y2="115" class="wire"/><text x="10" y="110" class="input-label">S (Set)</text>
+
+              <!-- NOR Gate 1 (Top) -->
+              <path d="M120,25 Q135,50 120,75 L150,75 Q185,75 185,50 Q185,25 150,25 Z" class="gate-body" style="stroke: var(--wire-green)"/>
+              <path d="M120,25 Q130,50 120,75" style="fill:none; stroke: var(--wire-green); stroke-width:2"/>
+              <circle cx="191" cy="50" r="6" class="bubble"/>
+
+              <!-- NOR Gate 2 (Bottom) -->
+              <path d="M120,95 Q135,120 120,145 L150,145 Q185,145 185,120 Q185,95 150,95 Z" class="gate-body" style="stroke: var(--wire-green)"/>
+              <path d="M120,95 Q130,120 120,145" style="fill:none; stroke: var(--wire-green); stroke-width:2"/>
+              <circle cx="191" cy="120" r="6" class="bubble"/>
+
+              <!-- Cross connections -->
+              <line x1="197" y1="50" x2="220" y2="50" class="wire"/>
+              <line x1="197" y1="120" x2="220" y2="120" class="wire"/>
+              <line x1="220" y1="50" x2="220" y2="85" class="wire"/>
+              <line x1="220" y1="85" x2="105" y2="105" class="wire"/>
+              <line x1="220" y1="120" x2="220" y2="85" class="wire"/>
+              
+              <!-- Outputs -->
+              <line x1="220" y1="50" x2="300" y2="50" class="wire"/><text x="310" y="54" class="output-label">Q</text>
+              <line x1="220" y1="120" x2="300" y2="120" class="wire"/><text x="310" y="124" class="output-label">Q'</text>
+            </svg>
+          </div>
+
+          <h4>NOR SR Latch Function Table</h4>
+          <div class="table-wrap">
+            <table class="truth-table">
+              <thead>
+                <tr><th>S</th><th>R</th><th>Q(t+1)</th><th>State Description</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>0</td><td>0</td><td>Q(t)</td><td>No Change (Memory)</td></tr>
+                <tr><td>0</td><td>1</td><td class="zero">0</td><td>Reset State</td></tr>
+                <tr><td>1</td><td>0</td><td class="one">1</td><td>Set State</td></tr>
+                <tr><td>1</td><td>1</td><td class="out zero">0 (Q = Q' = 0)</td><td>Invalid/Forbidden State</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3>2. SR Latch (NAND Gate Variant)</h3>
+          <p>Uses cross-coupled NAND gates. The inputs are active-low (\(\bar{S}\) and \(\bar{R}\)).</p>
+
+          <h4>NAND SR Latch Function Table</h4>
+          <div class="table-wrap">
+            <table class="truth-table">
+              <thead>
+                <tr><th>S'</th><th>R'</th><th>Q(t+1)</th><th>State Description</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>0</td><td>0</td><td class="out one">1 (Q = Q' = 1)</td><td>Invalid/Forbidden State</td></tr>
+                <tr><td>0</td><td>1</td><td class="one">1</td><td>Set State</td></tr>
+                <tr><td>1</td><td>0</td><td class="zero">0</td><td>Reset State</td></tr>
+                <tr><td>1</td><td>1</td><td>Q(t)</td><td>No Change (Memory)</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3>3. D Latch (Data Transparent Latch)</h3>
+          <p>By connecting an inverter between the \(S\) and \(R\) inputs of a controlled latch, we eliminate the invalid input condition.</p>
+          <div class="math-block">If C = 1 &rarr; Q(t+1) = D (Transparent mode)
+If C = 0 &rarr; Q(t+1) = Q(t) (Hold/Latch mode)</div>
+
+          <!-- SVG: D Latch Logic Diagram -->
+          <div class="svg-wrap">
+            <svg viewBox="0 0 450 180" width="450" height="180" xmlns="http://www.w3.org/2000/svg">
+              <text x="10" y="20" fill="var(--wire-cyan)" font-weight="bold">D Latch Circuit (NAND implementation)</text>
+              <!-- Inputs -->
+              <line x1="20" y1="60" x2="80" y2="60" class="wire"/><text x="10" y="55" class="input-label">D</text>
+              <line x1="20" y1="130" x2="180" y2="130" class="wire"/><text x="10" y="125" class="input-label">C (Clock/Enable)</text>
+
+              <!-- Inverter -->
+              <line x1="40" y1="60" x2="40" y2="150" class="wire"/>
+              <line x1="40" y1="150" x2="80" y2="150" class="wire"/>
+              <polygon points="80,140 80,160 100,150" class="gate-body-not"/>
+              <circle cx="106" cy="150" r="5" class="bubble"/>
+              <line x1="112" y1="150" x2="180" y2="150" class="wire"/>
+
+              <!-- Control NAND 1 -->
+              <line x1="80" y1="60" x2="180" y2="60" class="wire"/>
+              <line x1="100" y1="130" x2="100" y2="80" class="wire"/>
+              <line x1="100" y1="80" x2="180" y2="80" class="wire"/>
+              <!-- NAND Gate Top -->
+              <path d="M180,50 L180,90 L205,90 Q225,90 225,70 Q225,50 205,50 Z" class="gate-body"/>
+              <circle cx="231" cy="70" r="5" class="bubble"/>
+
+              <!-- Control NAND 2 -->
+              <line x1="100" y1="130" x2="180" y2="130" class="wire"/>
+              <!-- NAND Gate Bottom -->
+              <path d="M180,130 L180,170 L205,170 Q225,170 225,150 Q225,130 205,130 Z" class="gate-body"/>
+              <circle cx="231" cy="150" r="5" class="bubble"/>
+
+              <!-- Latch stage connection lines -->
+              <line x1="237" y1="70" x2="270" y2="70" class="wire"/>
+              <line x1="237" y1="150" x2="270" y2="150" class="wire"/>
+            </svg>
+          </div>
+        </div>
+      </details>
+
+      <!-- 5.3 Edge-Triggered Flip-Flops -->
+      <details id="ch5-flipflops">
+        <summary>
+          <span class="topic-icon">🔄</span>
+          5.3 — Edge-Triggered Flip-Flops (D, JK, T)
+        </summary>
+        <div class="details-body">
+          <p>Flip-flops sample inputs and update outputs only at a clock signal edge transition (rising edge or falling edge).</p>
+
+          <h3>1. D Flip-Flop</h3>
+          <p>The output follows the input \(D\) value present at the active clock transition. Its characteristic equation is:</p>
+          <div class="math-block">Q(t+1) = D</div>
+
+          <h3>2. JK Flip-Flop</h3>
+          <p>The JK flip-flop expands on the SR structure by including a **Toggle** state when both inputs are high (\(J = K = 1\)). Its characteristic equation is derived as:</p>
+          <div class="math-block">Q(t+1) = JQ' + K'Q</div>
+
+          <h4>JK Flip-Flop Excitation & Characteristic Tables</h4>
+          <div class="theorem-grid">
+            <div class="theorem-item">
+              <div class="th-name">Characteristic Table</div>
+              <div class="th-eq">
+                Q(t)=0, J=0, K=0 &rarr; Q(t+1)=0 (Hold)<br>
+                Q(t)=0, J=0, K=1 &rarr; Q(t+1)=0 (Reset)<br>
+                Q(t)=0, J=1, K=0 &rarr; Q(t+1)=1 (Set)<br>
+                Q(t)=0, J=1, K=1 &rarr; Q(t+1)=1 (Toggle)<br>
+                Q(t)=1, J=0, K=0 &rarr; Q(t+1)=1 (Hold)<br>
+                Q(t)=1, J=0, K=1 &rarr; Q(t+1)=0 (Reset)<br>
+                Q(t)=1, J=1, K=0 &rarr; Q(t+1)=1 (Set)<br>
+                Q(t)=1, J=1, K=1 &rarr; Q(t+1)=0 (Toggle)
+              </div>
+            </div>
+            <div class="theorem-item">
+              <div class="th-name">Excitation Table</div>
+              <div class="th-eq">
+                Q(t) &rarr; Q(t+1) | J &nbsp; K<br>
+                0 &rarr; 0 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| 0 &nbsp; X (Don't care)<br>
+                0 &rarr; 1 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| 1 &nbsp; X<br>
+                1 &rarr; 0 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| X &nbsp; 1<br>
+                1 &rarr; 1 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| X &nbsp; 0
+              </div>
+            </div>
+          </div>
+
+          <h3>3. T Flip-Flop (Toggle Flip-Flop)</h3>
+          <p>Toggles its state on the active clock edge when \(T = 1\), and holds its value when \(T = 0\). Its characteristic equation is:</p>
+          <div class="math-block">Q(t+1) = T &oplus; Q = TQ' + T'Q</div>
+        </div>
+      </details>
+
+      <!-- 5.4 Analysis of Clocked Sequential Circuits -->
+      <details id="ch5-analysis">
+        <summary>
+          <span class="topic-icon">🕵️</span>
+          5.4 — Analysis of Clocked Sequential Circuits
+        </summary>
+        <div class="details-body">
+          <p>Analyzing sequential circuits involves deriving their state equations, transition tables, and state diagrams.</p>
+
+          <div class="callout theorem">
+            <div class="callout-title">Analysis Example: JK Flip-Flop (Chapter 5 slide 52-53)</div>
+            <p>Determine the state equations and derive the state table for the sequential circuit with inputs \(J_A, K_A, J_B, K_B\):</p>
+            <div class="math-block"><strong>Excitation Equations:</strong>
+J<sub>A</sub> = B,   K<sub>A</sub> = Bx'
+J<sub>B</sub> = x',  K<sub>B</sub> = A &oplus; x
+
+<strong>Substitute into JK Characteristic Equation:</strong>
+A(t+1) = J<sub>A</sub>A' + K<sub>A</sub>'A
+       = BA' + (Bx')'A = A'B + A(B' + x) = A'B + AB' + Ax
+B(t+1) = J<sub>B</sub>B' + K<sub>B</sub>'B
+       = x'B' + (A &oplus; x)'B = x'B' + (Ax + A'x')B</div>
+          </div>
+
+          <h3>Transition Table (Present State &rarr; Next State)</h3>
+          <div class="table-wrap">
+            <table class="truth-table">
+              <thead>
+                <tr>
+                  <th colspan="2">Present State</th>
+                  <th>Input</th>
+                  <th colspan="2">Next State</th>
+                  <th>Output</th>
+                </tr>
+                <tr>
+                  <th>A</th><th>B</th><th>x</th>
+                  <th>A(t+1)</th><th>B(t+1)</th><th>y</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>0</td><td>0</td><td>0</td><td class="zero">0</td><td class="one">1</td><td class="zero">0</td></tr>
+                <tr><td>0</td><td>0</td><td>1</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td></tr>
+                <tr><td>0</td><td>1</td><td>0</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td></tr>
+                <tr><td>0</td><td>1</td><td>1</td><td class="one">1</td><td class="zero">0</td><td class="zero">0</td></tr>
+                <tr><td>1</td><td>0</td><td>0</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td></tr>
+                <tr><td>1</td><td>0</td><td>1</td><td class="one">1</td><td class="zero">0</td><td class="zero">0</td></tr>
+                <tr><td>1</td><td>1</td><td>0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td></tr>
+                <tr><td>1</td><td>1</td><td>1</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </details>
+
+      <!-- 5.5 Design of Clocked Sequential Circuits -->
+      <details id="ch5-design">
+        <summary>
+          <span class="topic-icon">⚙️</span>
+          5.5 — Design Procedure of Clocked Sequential Circuits
+        </summary>
+        <div class="details-body">
+          <p>The design of sequential circuits follows the reverse path of analysis: State Diagram &rarr; State Table &rarr; State Reduction/Assignment &rarr; Excitation Tables &rarr; K-maps &rarr; Final Logic Circuit.</p>
+
+          <div class="callout example">
+            <div class="callout-title">Design Example: Sequential circuit using D Flip-Flops (Chapter 5 slide 58-59)</div>
+            <p>We are given the state transition table:</p>
+            <div class="table-wrap">
+              <table class="truth-table">
+                <thead>
+                  <tr>
+                    <th colspan="2">Present State</th>
+                    <th>Input</th>
+                    <th colspan="2">Next State</th>
+                    <th>Output</th>
+                  </tr>
+                  <tr>
+                    <th>A</th><th>B</th><th>x</th>
+                    <th>A(t+1)</th><th>B(t+1)</th><th>y</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>0</td><td>0</td><td>0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td></tr>
+                  <tr><td>0</td><td>0</td><td>1</td><td class="zero">0</td><td class="one">1</td><td class="zero">0</td></tr>
+                  <tr><td>0</td><td>1</td><td>0</td><td class="zero">0</td><td class="zero">0</td><td class="one">1</td></tr>
+                  <tr><td>0</td><td>1</td><td>1</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td></tr>
+                  <tr><td>1</td><td>0</td><td>0</td><td class="zero">0</td><td class="zero">0</td><td class="one">1</td></tr>
+                  <tr><td>1</td><td>0</td><td>1</td><td class="one">1</td><td class="zero">0</td><td class="zero">0</td></tr>
+                  <tr><td>1</td><td>1</td><td>0</td><td class="zero">0</td><td class="zero">0</td><td class="one">1</td></tr>
+                  <tr><td>1</td><td>1</td><td>1</td><td class="one">1</td><td class="zero">0</td><td class="zero">0</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <p><strong>K-map Simplifications:</strong> Since \(D_A = A(t+1)\) and \(D_B = B(t+1)\) for D flip-flops:</p>
+            <div class="math-block">D<sub>A</sub> = Ax + Bx
+D<sub>B</sub> = A'x
+y = (A + B)x'</div>
+          </div>
+        </div>
+      </details>
+
+      <!-- 5.6 Sequence Detectors -->
+      <details id="ch5-sequence">
+        <summary>
+          <span class="topic-icon">🎯</span>
+          5.6 — Sequence Detectors (11011 & 1001 Overlap Cases)
+        </summary>
+        <div class="details-body">
+          <p>Sequence detectors inspect a stream of bits and output <code>1</code> when a target pattern is found. There are overlapping and non-overlapping variations.</p>
+
+          <div class="callout example">
+            <div class="callout-title">11011 Sequence Recognizer (Overlapping Case)</div>
+            <p>We need 5 states to recognize the 5-bit sequence. Let states be \(A\) (initial), \(B\) (detected 1), \(C\) (detected 11), \(D\) (detected 110), and \(E\) (detected 1101). Upon receiving the final <code>1</code> in state \(E\), the output goes to <code>1</code>, and we transition to state \(C\) (reusing the trailing <code>11</code> of the detected sequence).</p>
+
+            <p><strong>State Descriptions & Transitions:</strong></p>
+            <ul>
+              <li><strong>State A:</strong> Awaiting first 1. If input = 0, stay in A. If input = 1, go to B.</li>
+              <li><strong>State B:</strong> Found 1. If input = 0, go to A. If input = 1, go to C.</li>
+              <li><strong>State C:</strong> Found 11. If input = 0, go to D. If input = 1, stay in C.</li>
+              <li><strong>State D:</strong> Found 110. If input = 0, go to A. If input = 1, go to E.</li>
+              <li><strong>State E:</strong> Found 1101. If input = 0, go to A. If input = 1, go to C with output = 1.</li>
+            </ul>
+          </div>
+
+          <div class="callout example">
+            <div class="callout-title">1001 Sequence Recognizer (Overlapping Case)</div>
+            <p>Detects the sequence 1001. States: \(A\) (Initial), \(B\) (Found 1), \(C\) (Found 10), \(D\) (Found 100). Receiving a <code>1</code> in state \(D\) produces output = 1, transitioning back to state \(B\) (reusing the final <code>1</code> as the first bit of the next sequence).</p>
+          </div>
+        </div>
+      </details>
+    </div> <!-- END CH5 -->
+
+    <!-- =========================================================================
+         CHAPTER 6: REGISTERS AND COUNTERS
+         ========================================================================= -->
+    <div class="chapter-section" id="ch6">
+      <div class="chapter-title">
+        <span class="badge">CH 6</span>
+        <h2>Registers and Counters</h2>
+      </div>
+
+      <!-- 6.1 Introduction to Registers -->
+      <details id="ch6-registers" open>
+        <summary>
+          <span class="topic-icon">💾</span>
+          6.1 — Introduction to Registers & Shift Registers
+        </summary>
+        <div class="details-body">
+          <div class="callout def">
+            <div class="callout-title">What is a Register?</div>
+            <p>A <strong>register</strong> is a group of binary storage cells (typically flip-flops) operating under a common clock, designed to hold, manipulate, and transfer multi-bit digital words. A register with \(n\) flip-flops is capable of storing \(n\) bits of data.</p>
+          </div>
+          <p>Flip-flops are single-bit storage elements. Processors handle larger chunks of data (such as 8, 16, 32, or 64 bits) which require grouping flip-flops together. Registers serve as extremely fast, temporary storage located directly inside the CPU.</p>
+
+          <h3>Shift Registers</h3>
+          <p>A <strong>shift register</strong> is a register capable of shifting its binary contents one bit position to the left or right during each clock transition. Shift registers are classified by their input and output configurations:</p>
+          <ul>
+            <li><strong>SISO (Serial-In Serial-Out):</strong> Data is loaded one bit at a time and read out one bit at a time. Used as a delay line.</li>
+            <li><strong>SIPO (Serial-In Parallel-Out):</strong> Data is loaded bit-by-bit but read out simultaneously. Essential for serial-to-parallel communications.</li>
+            <li><strong>PISO (Parallel-In Serial-Out):</strong> Data is loaded in parallel and shifted out on a single serial wire. Used for parallel-to-serial conversion.</li>
+            <li><strong>PIPO (Parallel-In Parallel-Out):</strong> Loads and outputs all bits simultaneously. Used for parallel data storage.</li>
+          </ul>
+
+          <h3>4-Bit Serial-In Parallel-Out (SIPO) Shift Register Schematic</h3>
+          <p>The following circuit illustrates a SIPO shift register using positive-edge triggered D flip-flops. Serial Input (SI) is applied at the input of the first stage, and the output of each stage feeds the next. The outputs \(Q_3, Q_2, Q_1, Q_0\) represent the parallel data word:</p>
+
+          <!-- SVG: 4-bit SIPO Shift Register -->
+          <div class="svg-wrap">
+            <svg viewBox="0 0 540 180" width="540" height="180" xmlns="http://www.w3.org/2000/svg">
+              <!-- D Flip-Flop 3 -->
+              <rect x="50" y="40" width="80" height="90" fill="var(--bg-card)" stroke="var(--gate-amber)" stroke-width="2.5" rx="4"/>
+              <text x="55" y="85" class="input-label">D</text>
+              <text x="110" y="85" class="output-label">Q<sub>3</sub></text>
+              <text x="80" y="115" class="gate-label">FF3</text>
+              <!-- Clock Triangle -->
+              <polygon points="50,105 60,110 50,115" fill="none" stroke="var(--wire-cyan)" stroke-width="2"/>
+
+              <!-- D Flip-Flop 2 -->
+              <rect x="170" y="40" width="80" height="90" fill="var(--bg-card)" stroke="var(--gate-amber)" stroke-width="2.5" rx="4"/>
+              <text x="175" y="85" class="input-label">D</text>
+              <text x="230" y="85" class="output-label">Q<sub>2</sub></text>
+              <text x="200" y="115" class="gate-label">FF2</text>
+              <polygon points="170,105 180,110 170,115" fill="none" stroke="var(--wire-cyan)" stroke-width="2"/>
+
+              <!-- D Flip-Flop 1 -->
+              <rect x="290" y="40" width="80" height="90" fill="var(--bg-card)" stroke="var(--gate-amber)" stroke-width="2.5" rx="4"/>
+              <text x="295" y="85" class="input-label">D</text>
+              <text x="350" y="85" class="output-label">Q<sub>1</sub></text>
+              <text x="320" y="115" class="gate-label">FF1</text>
+              <polygon points="290,105 300,110 290,115" fill="none" stroke="var(--wire-cyan)" stroke-width="2"/>
+
+              <!-- D Flip-Flop 0 -->
+              <rect x="410" y="40" width="80" height="90" fill="var(--bg-card)" stroke="var(--gate-amber)" stroke-width="2.5" rx="4"/>
+              <text x="415" y="85" class="input-label">D</text>
+              <text x="470" y="85" class="output-label">Q<sub>0</sub></text>
+              <text x="440" y="115" class="gate-label">FF0</text>
+              <polygon points="410,105 420,110 410,115" fill="none" stroke="var(--wire-cyan)" stroke-width="2"/>
+
+              <!-- Wires and Signals -->
+              <!-- Serial Input SI -->
+              <line x1="10" y1="80" x2="50" y2="80" class="wire"/>
+              <text x="10" y="72" class="input-label">SI</text>
+
+              <!-- Inter-stage shifts -->
+              <line x1="130" y1="80" x2="170" y2="80" class="wire"/>
+              <line x1="250" y1="80" x2="290" y2="80" class="wire"/>
+              <line x1="370" y1="80" x2="410" y2="80" class="wire"/>
+
+              <!-- Serial Out SO -->
+              <line x1="490" y1="80" x2="530" y2="80" class="wire"/>
+              <text x="500" y="72" class="output-label">SO</text>
+
+              <!-- Clock bus -->
+              <line x1="25" y1="150" x2="385" y2="150" class="wire"/>
+              <line x1="25" y1="150" x2="25" y2="110" class="wire"/>
+              <line x1="25" y1="110" x2="50" y2="110" class="wire"/>
+              <line x1="145" y1="150" x2="145" y2="110" class="wire"/>
+              <line x1="145" y1="110" x2="170" y2="110" class="wire"/>
+              <line x1="265" y1="150" x2="265" y2="110" class="wire"/>
+              <line x1="265" y1="110" x2="290" y2="110" class="wire"/>
+              <line x1="385" y1="150" x2="385" y2="110" class="wire"/>
+              <line x1="385" y1="110" x2="410" y2="110" class="wire"/>
+              
+              <!-- Clock Input Connection -->
+              <line x1="25" y1="150" x2="15" y2="150" class="wire"/>
+              <circle cx="145" cy="150" r="3" fill="var(--wire-cyan)"/>
+              <circle cx="265" cy="150" r="3" fill="var(--wire-cyan)"/>
+              <circle cx="385" cy="150" r="3" fill="var(--wire-cyan)"/>
+              <text x="5" y="165" class="input-label">CLK</text>
+
+              <!-- Parallel output connections (SIPO taps) -->
+              <line x1="130" y1="80" x2="130" y2="20" class="wire"/>
+              <line x1="250" y1="80" x2="250" y2="20" class="wire"/>
+              <line x1="370" y1="80" x2="370" y2="20" class="wire"/>
+              <line x1="490" y1="80" x2="490" y2="20" class="wire"/>
+              
+              <circle cx="130" cy="80" r="3" fill="var(--wire-cyan)"/>
+              <circle cx="250" cy="80" r="3" fill="var(--wire-cyan)"/>
+              <circle cx="370" cy="80" r="3" fill="var(--wire-cyan)"/>
+              <circle cx="490" cy="80" r="3" fill="var(--wire-cyan)"/>
+
+              <text x="120" y="15" class="output-label">Q<sub>3</sub></text>
+              <text x="240" y="15" class="output-label">Q<sub>2</sub></text>
+              <text x="360" y="15" class="output-label">Q<sub>1</sub></text>
+              <text x="480" y="15" class="output-label">Q<sub>0</sub></text>
+            </svg>
+          </div>
+        </div>
+      </details>
+
+      <!-- 6.2 Asynchronous/Ripple Counters -->
+      <details id="ch6-counters">
+        <summary>
+          <span class="topic-icon">🔄</span>
+          6.2 — Asynchronous (Ripple) Counters
+        </summary>
+        <div class="details-body">
+          <div class="callout def">
+            <div class="callout-title">Ripple Counter Definition</div>
+            <p>An <strong>asynchronous (ripple) counter</strong> is one in which the clock inputs of the flip-flops are not wired together. Instead, the transition of the output of one flip-flop triggers the next. The clock "ripples" through the chain, causing accumulated propagation delay.</p>
+          </div>
+          <p>Because flip-flops do not transition simultaneously, intermediate temporary states appear. The propagation delay of a ripple counter is \(n \cdot t_{pd}\), which limits its max operating frequency.</p>
+
+          <h3>1. 3-Bit Asynchronous UP Counter (Negative-Edge Triggered)</h3>
+          <p>By connecting J and K inputs to HIGH (1), the flip-flops toggle on every active clock edge. To count UP, the output \(Q_i\) of each stage is connected to the clock input of the next negative-edge triggered stage:</p>
+
+          <!-- SVG: Asynchronous UP Counter -->
+          <div class="svg-wrap">
+            <svg viewBox="0 0 450 180" width="450" height="180" xmlns="http://www.w3.org/2000/svg">
+              <text x="10" y="20" fill="var(--wire-cyan)" font-weight="bold">3-Bit Ripple UP Counter</text>
+              
+              <!-- HIGH rail -->
+              <line x1="20" y1="35" x2="380" y2="35" class="wire" stroke="var(--wire-green)"/>
+              <text x="390" y="39" fill="var(--wire-green)" font-weight="bold">HIGH (1)</text>
+
+              <!-- FF 0 (LSB) -->
+              <rect x="50" y="50" width="80" height="90" fill="var(--bg-card)" stroke="var(--gate-amber)" stroke-width="2.5" rx="4"/>
+              <text x="55" y="75" class="input-label">J</text>
+              <text x="55" y="115" class="input-label">K</text>
+              <text x="110" y="95" class="output-label">Q<sub>0</sub></text>
+              <circle cx="50" cy="95" r="4" fill="none" stroke="var(--wire-cyan)" stroke-width="2"/> <!-- Bubble -->
+              <polygon points="54,90 64,95 54,100" fill="none" stroke="var(--wire-cyan)" stroke-width="1.5"/>
+
+              <!-- FF 1 -->
+              <rect x="190" y="50" width="80" height="90" fill="var(--bg-card)" stroke="var(--gate-amber)" stroke-width="2.5" rx="4"/>
+              <text x="195" y="75" class="input-label">J</text>
+              <text x="195" y="115" class="input-label">K</text>
+              <text x="250" y="95" class="output-label">Q<sub>1</sub></text>
+              <circle cx="190" cy="95" r="4" fill="none" stroke="var(--wire-cyan)" stroke-width="2"/>
+              <polygon points="194,90 204,95 194,100" fill="none" stroke="var(--wire-cyan)" stroke-width="1.5"/>
+
+              <!-- FF 2 (MSB) -->
+              <rect x="330" y="50" width="80" height="90" fill="var(--bg-card)" stroke="var(--gate-amber)" stroke-width="2.5" rx="4"/>
+              <text x="335" y="75" class="input-label">J</text>
+              <text x="335" y="115" class="input-label">K</text>
+              <text x="390" y="95" class="output-label">Q<sub>2</sub></text>
+              <circle cx="330" cy="95" r="4" fill="none" stroke="var(--wire-cyan)" stroke-width="2"/>
+              <polygon points="334,90 344,95 334,100" fill="none" stroke="var(--wire-cyan)" stroke-width="1.5"/>
+
+              <!-- Clock Input -->
+              <line x1="10" y1="95" x2="46" y2="95" class="wire"/>
+              <text x="10" y="87" class="input-label">CLK</text>
+
+              <!-- J-K connections to HIGH -->
+              <line x1="65" y1="35" x2="65" y2="70" class="wire" stroke="var(--wire-green)"/>
+              <line x1="65" y1="70" x2="65" y2="110" class="wire" stroke="var(--wire-green)"/>
+              <line x1="65" y1="70" x2="50" y2="70" class="wire" stroke="var(--wire-green)"/>
+              <line x1="65" y1="110" x2="50" y2="110" class="wire" stroke="var(--wire-green)"/>
+              <circle cx="65" cy="35" r="3" fill="var(--wire-green)"/>
+
+              <line x1="205" y1="35" x2="205" y2="70" class="wire" stroke="var(--wire-green)"/>
+              <line x1="205" y1="70" x2="205" y2="110" class="wire" stroke="var(--wire-green)"/>
+              <line x1="205" y1="70" x2="190" y2="70" class="wire" stroke="var(--wire-green)"/>
+              <line x1="205" y1="110" x2="190" y2="110" class="wire" stroke="var(--wire-green)"/>
+              <circle cx="205" cy="35" r="3" fill="var(--wire-green)"/>
+
+              <line x1="345" y1="35" x2="345" y2="70" class="wire" stroke="var(--wire-green)"/>
+              <line x1="345" y1="70" x2="345" y2="110" class="wire" stroke="var(--wire-green)"/>
+              <line x1="345" y1="70" x2="330" y2="70" class="wire" stroke="var(--wire-green)"/>
+              <line x1="345" y1="110" x2="330" y2="110" class="wire" stroke="var(--wire-green)"/>
+              <circle cx="345" cy="35" r="3" fill="var(--wire-green)"/>
+
+              <!-- Interstage clock ripples -->
+              <line x1="130" y1="95" x2="155" y2="95" class="wire"/>
+              <line x1="155" y1="95" x2="155" y2="160" class="wire"/>
+              <line x1="155" y1="160" x2="175" y2="160" class="wire"/>
+              <line x1="175" y1="160" x2="175" y2="95" class="wire"/>
+              <line x1="175" y1="95" x2="186" y2="95" class="wire"/>
+              
+              <line x1="270" y1="95" x2="295" y2="95" class="wire"/>
+              <line x1="295" y1="95" x2="295" y2="160" class="wire"/>
+              <line x1="295" y1="160" x2="315" y2="160" class="wire"/>
+              <line x1="315" y1="160" x2="315" y2="95" class="wire"/>
+              <line x1="315" y1="95" x2="326" y2="95" class="wire"/>
+
+              <!-- Outputs -->
+              <line x1="130" y1="95" x2="130" y2="20" class="wire"/><circle cx="130" cy="95" r="3" fill="var(--wire-cyan)"/>
+              <line x1="270" y1="95" x2="270" y2="20" class="wire"/><circle cx="270" cy="95" r="3" fill="var(--wire-cyan)"/>
+              <line x1="410" y1="95" x2="410" y2="20" class="wire"/>
+
+              <text x="125" y="15" class="output-label">Q<sub>0</sub> (LSB)</text>
+              <text x="265" y="15" class="output-label">Q<sub>1</sub></text>
+              <text x="405" y="15" class="output-label">Q<sub>2</sub> (MSB)</text>
+            </svg>
+          </div>
+
+          <h3>2. 3-Bit Asynchronous DOWN Counter</h3>
+          <p>To count DOWN with negative-edge triggered flip-flops, the clock inputs must be driven by the inverted outputs (\(\overline{Q}_i\)) of the preceding stage:</p>
+
+          <!-- SVG: Asynchronous DOWN Counter -->
+          <div class="svg-wrap">
+            <svg viewBox="0 0 450 180" width="450" height="180" xmlns="http://www.w3.org/2000/svg">
+              <text x="10" y="20" fill="var(--wire-cyan)" font-weight="bold">3-Bit Ripple DOWN Counter</text>
+              <!-- FF stages similar layout -->
+              <rect x="50" y="50" width="80" height="90" fill="var(--bg-card)" stroke="var(--gate-amber)" stroke-width="2.5" rx="4"/>
+              <text x="110" y="70" class="output-label">Q<sub>0</sub></text>
+              <text x="110" y="120" class="output-label">Q'<sub>0</sub></text>
+              
+              <rect x="190" y="50" width="80" height="90" fill="var(--bg-card)" stroke="var(--gate-amber)" stroke-width="2.5" rx="4"/>
+              <text x="250" y="70" class="output-label">Q<sub>1</sub></text>
+              <text x="250" y="120" class="output-label">Q'<sub>1</sub></text>
+              
+              <rect x="330" y="50" width="80" height="90" fill="var(--bg-card)" stroke="var(--gate-amber)" stroke-width="2.5" rx="4"/>
+              <text x="390" y="70" class="output-label">Q<sub>2</sub></text>
+              <text x="390" y="120" class="output-label">Q'<sub>2</sub></text>
+
+              <!-- Clock paths -->
+              <line x1="10" y1="95" x2="50" y2="95" class="wire"/>
+              <!-- Clock 0 bubble and triangle -->
+              <circle cx="50" cy="95" r="4" fill="none" stroke="var(--wire-cyan)" stroke-width="2"/>
+
+              <!-- Q0' output to CLK1 -->
+              <line x1="130" y1="120" x2="160" y2="120" class="wire"/>
+              <line x1="160" y1="120" x2="160" y2="95" class="wire"/>
+              <line x1="160" y1="95" x2="186" y2="95" class="wire"/>
+              <circle cx="190" cy="95" r="4" fill="none" stroke="var(--wire-cyan)" stroke-width="2"/>
+
+              <!-- Q1' output to CLK2 -->
+              <line x1="270" y1="120" x2="300" y2="120" class="wire"/>
+              <line x1="300" y1="120" x2="300" y2="95" class="wire"/>
+              <line x1="300" y1="95" x2="326" y2="95" class="wire"/>
+              <circle cx="330" cy="95" r="4" fill="none" stroke="var(--wire-cyan)" stroke-width="2"/>
+
+              <!-- Outputs -->
+              <line x1="130" y1="70" x2="130" y2="20" class="wire"/>
+              <line x1="270" y1="70" x2="270" y2="20" class="wire"/>
+              <line x1="410" y1="70" x2="410" y2="20" class="wire"/>
+
+              <text x="125" y="15" class="output-label">Q<sub>0</sub> (LSB)</text>
+              <text x="265" y="15" class="output-label">Q<sub>1</sub></text>
+              <text x="405" y="15" class="output-label">Q<sub>2</sub> (MSB)</text>
+            </svg>
+          </div>
+
+          <h3>3. Asynchronous Decade / MOD-10 Counter</h3>
+          <p>A BCD / decade counter has a truncated sequence counting from <code>0000</code> to <code>1001</code>. When the next state reaches <code>1010</code> (decimal 10), a NAND gate detects the occurrence of \(Q_3 = 1\) and \(Q_1 = 1\), outputting a low pulse that resets all flip-flops via their asynchronous active-low Clear (\(\overline{CLR}\)) inputs:</p>
+
+          <!-- SVG: Decade / MOD-10 Ripple Counter with NAND reset -->
+          <div class="svg-wrap">
+            <svg viewBox="0 0 620 220" width="620" height="220" xmlns="http://www.w3.org/2000/svg">
+              <text x="10" y="20" fill="var(--wire-cyan)" font-weight="bold">BCD Decade Ripple Counter with NAND Feedback</text>
+              
+              <!-- 4 Flip-Flop Blocks -->
+              <!-- FF0 -->
+              <rect x="50" y="40" width="80" height="90" fill="var(--bg-card)" stroke="var(--gate-amber)" stroke-width="2.5" rx="4"/>
+              <text x="110" y="70" class="output-label">Q<sub>0</sub></text>
+              <text x="110" y="115" class="gate-label">FF0</text>
+              <line x1="10" y1="85" x2="50" y2="85" class="wire"/><text x="15" y="77" class="input-label">CLK</text>
+              <circle cx="50" cy="85" r="4" fill="none" stroke="var(--wire-cyan)" stroke-width="2"/>
+              <!-- FF1 -->
+              <rect x="180" y="40" width="80" height="90" fill="var(--bg-card)" stroke="var(--gate-amber)" stroke-width="2.5" rx="4"/>
+              <text x="240" y="70" class="output-label">Q<sub>1</sub></text>
+              <text x="240" y="115" class="gate-label">FF1</text>
+              <line x1="130" y1="70" x2="155" y2="70" class="wire"/>
+              <line x1="155" y1="70" x2="155" y2="85" class="wire"/>
+              <line x1="155" y1="85" x2="176" y2="85" class="wire"/>
+              <circle cx="180" cy="85" r="4" fill="none" stroke="var(--wire-cyan)" stroke-width="2"/>
+              <circle cx="130" cy="70" r="3" fill="var(--wire-cyan)"/>
+              <!-- FF2 -->
+              <rect x="310" y="40" width="80" height="90" fill="var(--bg-card)" stroke="var(--gate-amber)" stroke-width="2.5" rx="4"/>
+              <text x="370" y="70" class="output-label">Q<sub>2</sub></text>
+              <text x="370" y="115" class="gate-label">FF2</text>
+              <line x1="260" y1="70" x2="285" y2="70" class="wire"/>
+              <line x1="285" y1="70" x2="285" y2="85" class="wire"/>
+              <line x1="285" y1="85" x2="306" y2="85" class="wire"/>
+              <circle cx="310" cy="85" r="4" fill="none" stroke="var(--wire-cyan)" stroke-width="2"/>
+              <circle cx="260" cy="70" r="3" fill="var(--wire-cyan)"/>
+              <!-- FF3 -->
+              <rect x="440" y="40" width="80" height="90" fill="var(--bg-card)" stroke="var(--gate-amber)" stroke-width="2.5" rx="4"/>
+              <text x="500" y="70" class="output-label">Q<sub>3</sub></text>
+              <text x="500" y="115" class="gate-label">FF3</text>
+              <line x1="390" y1="70" x2="415" y2="70" class="wire"/>
+              <line x1="415" y1="70" x2="415" y2="85" class="wire"/>
+              <line x1="415" y1="85" x2="436" y2="85" class="wire"/>
+              <circle cx="440" cy="85" r="4" fill="none" stroke="var(--wire-cyan)" stroke-width="2"/>
+              <circle cx="390" cy="70" r="3" fill="var(--wire-cyan)"/>
+
+              <!-- NAND Gate Reset Circuit -->
+              <!-- NAND Gate symbol -->
+              <path d="M540,140 L540,170 L555,170 Q570,170 570,155 Q570,140 555,140 Z" class="gate-body" style="stroke: var(--accent-pink)"/>
+              <circle cx="576" cy="155" r="5" class="bubble"/>
+              
+              <!-- Feed inputs Q1 and Q3 to NAND -->
+              <line x1="260" y1="70" x2="260" y2="25" class="wire"/>
+              <line x1="260" y1="25" x2="520" y2="25" class="wire"/>
+              <line x1="520" y1="25" x2="520" y2="148" class="wire"/>
+              <line x1="520" y1="148" x2="540" y2="148" class="wire"/>
+              <text x="265" y="38" fill="var(--text-muted)" font-size="10px">Q<sub>1</sub></text>
+
+              <line x1="500" y1="70" x2="500" y2="35" class="wire"/>
+              <line x1="500" y1="35" x2="530" y2="35" class="wire"/>
+              <line x1="530" y1="35" x2="530" y2="162" class="wire"/>
+              <line x1="530" y1="162" x2="540" y2="162" class="wire"/>
+              <circle cx="500" cy="70" r="3" fill="var(--wire-cyan)"/>
+              <text x="485" y="48" fill="var(--text-muted)" font-size="10px">Q<sub>3</sub></text>
+
+              <!-- NAND output to Clear line -->
+              <path d="M 581 155 L 600 155 L 600 195 L 90 195 L 90 135 L 90 130" stroke="var(--accent-pink)" stroke-width="2.5" fill="none"/>
+              <!-- Taps into Clear inputs at the bottom of each FF -->
+              <circle cx="90" cy="130" r="2.5" class="bubble"/>
+              
+              <line x1="220" y1="195" x2="220" y2="135" class="wire" stroke="var(--accent-pink)"/>
+              <line x1="220" y1="135" x2="220" y2="130" class="wire" stroke="var(--accent-pink)"/>
+              <circle cx="220" cy="130" r="2.5" class="bubble"/>
+              
+              <line x1="350" y1="195" x2="350" y2="135" class="wire" stroke="var(--accent-pink)"/>
+              <line x1="350" y1="135" x2="350" y2="130" class="wire" stroke="var(--accent-pink)"/>
+              <circle cx="350" cy="130" r="2.5" class="bubble"/>
+
+              <line x1="480" y1="195" x2="480" y2="135" class="wire" stroke="var(--accent-pink)"/>
+              <line x1="480" y1="135" x2="480" y2="130" class="wire" stroke="var(--accent-pink)"/>
+              <circle cx="480" cy="130" r="2.5" class="bubble"/>
+
+              <circle cx="220" cy="195" r="3" fill="var(--accent-pink)"/>
+              <circle cx="350" cy="195" r="3" fill="var(--accent-pink)"/>
+              <circle cx="480" cy="195" r="3" fill="var(--accent-pink)"/>
+              
+              <text x="250" y="190" fill="var(--accent-pink)" font-size="10px" font-weight="bold">Clear Bus (NAND Reset at 1010)</text>
+            </svg>
+          </div>
+        </div>
+      </details>
+
+      <!-- 6.3 Synchronous Counters -->
+      <details id="ch6-sync">
+        <summary>
+          <span class="topic-icon">⚙️</span>
+          6.3 — Synchronous Counters
+        </summary>
+        <div class="details-body">
+          <div class="callout def">
+            <div class="callout-title">Synchronous Counter Definition</div>
+            <p>A <strong>synchronous counter</strong> triggers all flip-flops simultaneously using a common clock signal. The transitions occur in synchrony, eliminating the propagation skew issues of ripple counters. This is achieved by generating toggle-enable signals for each stage based on preceding outputs.</p>
+          </div>
+
+          <h3>1. Design of a 2-Bit Synchronous Counter (First Principles)</h3>
+          <p>We want to design a 2-bit counter cycling through states <code>00 &rarr; 01 &rarr; 10 &rarr; 11 &rarr; 00</code> using J-K Flip-Flops.</p>
+          
+          <p><strong>Step 1: State Table & Excitation Requirements</strong></p>
+          <div class="table-wrap">
+            <table class="truth-table">
+              <thead>
+                <tr>
+                  <th colspan="2">Present State</th>
+                  <th colspan="2">Next State</th>
+                  <th colspan="4">Excitation Inputs</th>
+                </tr>
+                <tr>
+                  <th>A</th><th>B</th>
+                  <th>A(t+1)</th><th>B(t+1)</th>
+                  <th>J<sub>A</sub></th><th>K<sub>A</sub></th>
+                  <th>J<sub>B</sub></th><th>K<sub>B</sub></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>0</td><td>0</td><td>0</td><td>1</td><td class="zero">0</td><td class="zero">X</td><td class="one">1</td><td class="one">X</td></tr>
+                <tr><td>0</td><td>1</td><td>1</td><td>0</td><td class="one">1</td><td class="zero">X</td><td class="zero">X</td><td class="one">1</td></tr>
+                <tr><td>1</td><td>0</td><td>1</td><td>1</td><td class="zero">X</td><td class="zero">0</td><td class="one">1</td><td class="one">X</td></tr>
+                <tr><td>1</td><td>1</td><td>0</td><td>0</td><td class="zero">X</td><td class="one">1</td><td class="zero">X</td><td class="one">1</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p><strong>Step 2: K-Map Minimizations</strong></p>
+          <ul>
+            <li>\(J_A\) K-map cells: \(0, 1, X, X\) &rarr; \(J_A = B\).</li>
+            <li>\(K_A\) K-map cells: \(X, X, 0, 1\) &rarr; \(K_A = B\).</li>
+            <li>\(J_B\) K-map cells: \(1, X, 1, X\) &rarr; \(J_B = 1\).</li>
+            <li>\(K_B\) K-map cells: \(X, 1, X, 1\) &rarr; \(K_B = 1\).</li>
+          </ul>
+
+          <h3>2. 4-Bit Synchronous Counter (Carry-Lookahead Style)</h3>
+          <p>For a 4-bit binary counter, a flip-flop toggles only if all lower-order outputs are 1. The equations are:
+            \(T_0 = 1\),
+            \(T_1 = Q_0\),
+            \(T_2 = Q_0 Q_1\),
+            \(T_3 = Q_0 Q_1 Q_2\).
+            These products are realized efficiently using AND gates connected in cascade:</p>
+
+          <!-- SVG: 4-bit Synchronous Binary Counter -->
+          <div class="svg-wrap">
+            <svg viewBox="0 0 580 200" width="580" height="200" xmlns="http://www.w3.org/2000/svg">
+              <text x="10" y="20" fill="var(--wire-cyan)" font-weight="bold">4-Bit Synchronous Binary Counter (with D/T FFs)</text>
+              
+              <!-- 4 stages -->
+              <!-- FF0 -->
+              <rect x="50" y="40" width="80" height="95" fill="var(--bg-card)" stroke="var(--gate-amber)" stroke-width="2.5" rx="4"/>
+              <text x="55" y="80" class="input-label">T</text>
+              <text x="110" y="80" class="output-label">Q<sub>0</sub></text>
+              <polygon points="50,105 60,110 50,115" fill="none" stroke="var(--wire-cyan)" stroke-width="2"/>
+              <!-- FF1 -->
+              <rect x="180" y="40" width="80" height="95" fill="var(--bg-card)" stroke="var(--gate-amber)" stroke-width="2.5" rx="4"/>
+              <text x="185" y="80" class="input-label">T</text>
+              <text x="240" y="80" class="output-label">Q<sub>1</sub></text>
+              <polygon points="180,105 190,110 180,115" fill="none" stroke="var(--wire-cyan)" stroke-width="2"/>
+              <!-- FF2 -->
+              <rect x="310" y="40" width="80" height="95" fill="var(--bg-card)" stroke="var(--gate-amber)" stroke-width="2.5" rx="4"/>
+              <text x="315" y="80" class="input-label">T</text>
+              <text x="370" y="80" class="output-label">Q<sub>2</sub></text>
+              <polygon points="310,105 320,110 310,115" fill="none" stroke="var(--wire-cyan)" stroke-width="2"/>
+              <!-- FF3 -->
+              <rect x="440" y="40" width="80" height="95" fill="var(--bg-card)" stroke="var(--gate-amber)" stroke-width="2.5" rx="4"/>
+              <text x="445" y="80" class="input-label">T</text>
+              <text x="500" y="80" class="output-label">Q<sub>3</sub></text>
+              <polygon points="440,105 450,110 440,115" fill="none" stroke="var(--wire-cyan)" stroke-width="2"/>
+
+              <!-- Carry Lookahead Gates -->
+              <!-- AND 1 -->
+              <path d="M285,60 L285,90 Q300,75 285,60" fill="none" stroke="var(--gate-amber)" stroke-width="2"/>
+              <path d="M275,60 L275,90 L285,90 Q305,75 285,60 Z" class="gate-body"/>
+              
+              <!-- AND 2 -->
+              <path d="M415,60 L415,90 Q430,75 415,60" fill="none" stroke="var(--gate-amber)" stroke-width="2"/>
+              <path d="M405,60 L405,90 L415,90 Q435,75 415,60 Z" class="gate-body"/>
+
+              <!-- Clock bus -->
+              <line x1="20" y1="165" x2="415" y2="165" class="wire"/>
+              <line x1="20" y1="165" x2="20" y2="110" class="wire"/>
+              <line x1="20" y1="110" x2="50" y2="110" class="wire"/>
+              
+              <line x1="150" y1="165" x2="150" y2="110" class="wire"/>
+              <line x1="150" y1="110" x2="180" y2="110" class="wire"/>
+              <line x1="280" y1="165" x2="280" y2="110" class="wire"/>
+              <line x1="280" y1="110" x2="310" y2="110" class="wire"/>
+              <line x1="410" y1="165" x2="410" y2="110" class="wire"/>
+              <line x1="410" y1="110" x2="440" y2="110" class="wire"/>
+
+              <circle cx="150" cy="165" r="3" fill="var(--wire-cyan)"/>
+              <circle cx="280" cy="165" r="3" fill="var(--wire-cyan)"/>
+              <circle cx="410" cy="165" r="3" fill="var(--wire-cyan)"/>
+              <text x="10" y="180" class="input-label">CLK</text>
+
+              <!-- Enable count input T0 = 1 -->
+              <line x1="10" y1="75" x2="50" y2="75" class="wire" stroke="var(--wire-green)"/>
+              <text x="10" y="68" fill="var(--wire-green)" font-weight="bold">EN (1)</text>
+
+              <!-- Connection Q0 to T1 -->
+              <line x1="130" y1="75" x2="180" y2="75" class="wire"/>
+              <circle cx="130" cy="75" r="3" fill="var(--wire-cyan)"/>
+
+              <!-- Connection Q1 to AND1 input -->
+              <line x1="240" y1="75" x2="275" y2="80" class="wire"/>
+              <circle cx="240" cy="75" r="3" fill="var(--wire-cyan)"/>
+
+              <!-- Feed Q0 to AND1 input -->
+              <line x1="155" y1="75" x2="155" y2="65" class="wire"/>
+              <line x1="155" y1="65" x2="275" y2="65" class="wire"/>
+              <circle cx="155" cy="75" r="3" fill="var(--wire-cyan)"/>
+
+              <!-- AND1 output to T2 -->
+              <line x1="305" y1="75" x2="310" y2="75" class="wire"/>
+
+              <!-- Connection Q2 to AND2 input -->
+              <line x1="370" y1="75" x2="405" y2="80" class="wire"/>
+              <circle cx="370" cy="75" r="3" fill="var(--wire-cyan)"/>
+
+              <!-- Feed AND1 output to AND2 input -->
+              <line x1="307" y1="75" x2="307" y2="65" class="wire"/>
+              <line x1="307" y1="65" x2="405" y2="65" class="wire"/>
+              <circle cx="307" cy="75" r="3" fill="var(--wire-cyan)"/>
+
+              <!-- AND2 output to T3 -->
+              <line x1="435" y1="75" x2="440" y2="75" class="wire"/>
+            </svg>
+          </div>
+        </div>
+      </details>
+
+      <!-- 6.4 Ring & Johnson Counters -->
+      <details id="ch6-other">
+        <summary>
+          <span class="topic-icon">⭕</span>
+          6.4 — Ring Counters & Johnson Counters
+        </summary>
+        <div class="details-body">
+          <p>Ring and Johnson counters are circular shift registers that cycle through specific, restricted state sequences. They require no decoding logic to identify individual states.</p>
+
+          <h3>1. Ring Counter</h3>
+          <p>An \(n\)-bit ring counter circulates a single <code>1</code> (or <code>0</code>) through \(n\) stages, yielding exactly \(n\) distinct states. It is initialized to <code>1000</code> by utilizing an active-low Reset line that Presets the first stage and Clears the others:</p>
+
+          <!-- SVG: Ring Counter -->
+          <div class="svg-wrap">
+            <svg viewBox="0 0 540 180" width="540" height="180" xmlns="http://www.w3.org/2000/svg">
+              <text x="10" y="20" fill="var(--wire-cyan)" font-weight="bold">4-Bit Ring Counter</text>
+              <!-- FFs -->
+              <rect x="50" y="40" width="80" height="90" fill="var(--bg-card)" stroke="var(--gate-amber)" stroke-width="2.5" rx="4"/>
+              <text x="100" y="115" class="gate-label">FF3</text>
+              <text x="55" y="65" fill="var(--accent-pink)" font-size="10px">PR</text>
+              
+              <rect x="170" y="40" width="80" height="90" fill="var(--bg-card)" stroke="var(--gate-amber)" stroke-width="2.5" rx="4"/>
+              <text x="220" y="115" class="gate-label">FF2</text>
+              <text x="175" y="120" fill="var(--accent-pink)" font-size="10px">CLR</text>
+
+              <rect x="290" y="40" width="80" height="90" fill="var(--bg-card)" stroke="var(--gate-amber)" stroke-width="2.5" rx="4"/>
+              <text x="340" y="115" class="gate-label">FF1</text>
+              <text x="295" y="120" fill="var(--accent-pink)" font-size="10px">CLR</text>
+
+              <rect x="410" y="40" width="80" height="90" fill="var(--bg-card)" stroke="var(--gate-amber)" stroke-width="2.5" rx="4"/>
+              <text x="460" y="115" class="gate-label">FF0</text>
+              <text x="415" y="120" fill="var(--accent-pink)" font-size="10px">CLR</text>
+
+              <!-- Shift Connections -->
+              <line x1="130" y1="80" x2="170" y2="80" class="wire"/>
+              <line x1="250" y1="80" x2="290" y2="80" class="wire"/>
+              <line x1="370" y1="80" x2="410" y2="80" class="wire"/>
+
+              <!-- Feedback loop Q0 to D3 -->
+              <path d="M490,80 L520,80 L520,25 L20,25 L20,80 L50,80" stroke="var(--wire-cyan)" stroke-width="2.5" fill="none"/>
+              <circle cx="490" cy="80" r="3" fill="var(--wire-cyan)"/>
+
+              <!-- Reset line to Preset/Clear -->
+              <line x1="10" y1="155" x2="480" y2="155" class="wire" stroke="var(--accent-pink)"/>
+              <text x="10" y="168" fill="var(--accent-pink)" font-weight="bold">RESET</text>
+              
+              <!-- Connection to PR FF3 -->
+              <line x1="90" y1="155" x2="90" y2="40" class="wire" stroke="var(--accent-pink)"/>
+              <!-- Connection to CLR FF2, FF1, FF0 -->
+              <line x1="210" y1="155" x2="210" y2="130" class="wire" stroke="var(--accent-pink)"/>
+              <line x1="330" y1="155" x2="330" y2="130" class="wire" stroke="var(--accent-pink)"/>
+              <line x1="450" y1="155" x2="450" y2="130" class="wire" stroke="var(--accent-pink)"/>
+
+              <circle cx="90" cy="155" r="3" fill="var(--accent-pink)"/>
+              <circle cx="210" cy="155" r="3" fill="var(--accent-pink)"/>
+              <circle cx="330" cy="155" r="3" fill="var(--accent-pink)"/>
+              <circle cx="450" cy="155" r="3" fill="var(--accent-pink)"/>
+
+              <circle cx="90" cy="40" r="2.5" class="bubble"/>
+              <circle cx="210" cy="130" r="2.5" class="bubble"/>
+              <circle cx="330" cy="130" r="2.5" class="bubble"/>
+              <circle cx="450" cy="130" r="2.5" class="bubble"/>
+            </svg>
+          </div>
+
+          <h3>2. Johnson Counter (Inverted Feedback Counter)</h3>
+          <p>An \(n\)-bit Johnson counter feeds the inverted output of the last stage (\(Q_0'\)) back to the first stage (\(D_3\)). This doubles the cycle length to \(2n\) states (8 states for 4 bits) and resets cleanly to <code>0000</code>:</p>
+
+          <!-- SVG: Johnson Counter -->
+          <div class="svg-wrap">
+            <svg viewBox="0 0 540 180" width="540" height="180" xmlns="http://www.w3.org/2000/svg">
+              <text x="10" y="20" fill="var(--wire-cyan)" font-weight="bold">4-Bit Johnson Counter (Mod-8)</text>
+              <!-- FFs -->
+              <rect x="50" y="40" width="80" height="90" fill="var(--bg-card)" stroke="var(--gate-amber)" stroke-width="2.5" rx="4"/>
+              <text x="100" y="115" class="gate-label">FF3</text>
+              <rect x="170" y="40" width="80" height="90" fill="var(--bg-card)" stroke="var(--gate-amber)" stroke-width="2.5" rx="4"/>
+              <text x="220" y="115" class="gate-label">FF2</text>
+              <rect x="290" y="40" width="80" height="90" fill="var(--bg-card)" stroke="var(--gate-amber)" stroke-width="2.5" rx="4"/>
+              <text x="340" y="115" class="gate-label">FF1</text>
+              <rect x="410" y="40" width="80" height="90" fill="var(--bg-card)" stroke="var(--gate-amber)" stroke-width="2.5" rx="4"/>
+              <text x="460" y="115" class="gate-label">FF0</text>
+              
+              <text x="470" y="70" class="output-label">Q</text>
+              <text x="470" y="105" class="output-label">Q'</text>
+
+              <!-- Shift lines -->
+              <line x1="130" y1="80" x2="170" y2="80" class="wire"/>
+              <line x1="250" y1="80" x2="290" y2="80" class="wire"/>
+              <line x1="370" y1="80" x2="410" y2="80" class="wire"/>
+
+              <!-- Inverted feedback loop Q0' to D3 -->
+              <path d="M490,105 L520,105 L520,25 L20,25 L20,80 L50,80" stroke="var(--accent-pink)" stroke-width="2.5" fill="none"/>
+              <circle cx="490" cy="105" r="3" fill="var(--accent-pink)"/>
+            </svg>
+          </div>
+
+          <h3>Johnson Counter State Sequence Table</h3>
+          <div class="table-wrap">
+            <table class="truth-table">
+              <thead>
+                <tr><th>Clock Pulse</th><th>Q<sub>3</sub></th><th>Q<sub>2</sub></th><th>Q<sub>1</sub></th><th>Q<sub>0</sub></th><th>Decimal Equivalent</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>0 (Initial Reset)</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td>0</td></tr>
+                <tr><td>1</td><td class="one">1</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td>8</td></tr>
+                <tr><td>2</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td><td class="zero">0</td><td>12</td></tr>
+                <tr><td>3</td><td class="one">1</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td><td>14</td></tr>
+                <tr><td>4</td><td class="one">1</td><td class="one">1</td><td class="one">1</td><td class="one">1</td><td>15</td></tr>
+                <tr><td>5</td><td class="zero">0</td><td class="one">1</td><td class="one">1</td><td class="one">1</td><td>7</td></tr>
+                <tr><td>6</td><td class="zero">0</td><td class="zero">0</td><td class="one">1</td><td class="one">1</td><td>3</td></tr>
+                <tr><td>7</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="one">1</td><td>1</td></tr>
+                <tr><td>8 (Recycle)</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td>0</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </details>
+
+      <!-- 6.5 Exercises & Homework Solutions -->
+      <details id="ch6-exercises">
+        <summary>
+          <span class="topic-icon">📝</span>
+          6.5 — Chapter 6 Homework & Exercises Solutions (Morris Mano)
+        </summary>
+        <div class="details-body">
+          <h3>Slide 40 Problem: Right-Shift Trace</h3>
+          <p><strong>Problem Statement:</strong> The contents of a 4-bit register is initially <code>0110</code>. The register is shifted six times to the right with the serial input being <code>1011100</code>. Determine the content of the register after each shift.</p>
+          <p><strong>Solution:</strong> In a right shift, the bits enter from the MSB ($Q_3$) side, shifting the current contents toward the LSB ($Q_0$) side. The bits of the input sequence <code>1011100</code> are shifted in starting from the rightmost bit (first <code>0</code>, then <code>0</code>, then <code>1</code>, then <code>1</code>, etc.):</p>
+          <div class="table-wrap">
+            <table class="truth-table">
+              <thead>
+                <tr><th>Shift Step</th><th>Serial Input Bit</th><th>Q<sub>3</sub></th><th>Q<sub>2</sub></th><th>Q<sub>1</sub></th><th>Q<sub>0</sub></th><th>Hex Value</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Initial State</td><td>—</td><td class="zero">0</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td><td>6</td></tr>
+                <tr><td>Shift 1</td><td>0</td><td class="zero">0</td><td class="zero">0</td><td class="one">1</td><td class="one">1</td><td>3</td></tr>
+                <tr><td>Shift 2</td><td>0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="one">1</td><td>1</td></tr>
+                <tr><td>Shift 3</td><td>1</td><td class="one">1</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td>8</td></tr>
+                <tr><td>Shift 4</td><td>1</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td><td class="zero">0</td><td>C (12)</td></tr>
+                <tr><td>Shift 5</td><td>1</td><td class="one">1</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td><td>E (14)</td></tr>
+                <tr><td>Shift 6</td><td>0</td><td class="zero">0</td><td class="one">1</td><td class="one">1</td><td class="one">1</td><td>7</td></tr>
+                <tr><td>Shift 7</td><td>1</td><td class="one">1</td><td class="zero">0</td><td class="one">1</td><td class="one">1</td><td>B (11)</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <hr style="margin: 30px 0; border-color: var(--border)"/>
+
+          <h3>Morris Mano Chapter 6 Homework Solutions</h3>
+
+          <div class="callout example">
+            <div class="callout-title">Problem 6-2: Synchronous Clear for Parallel-Load Register</div>
+            <p><strong>Question:</strong> Include a synchronous clear input to the "Register with Parallel Load". The modified register will have a parallel load capability and a synchronous clear capability. The register is cleared synchronously when the clock goes through a positive transition and the clear input is equal to 1.</p>
+            <p><strong>Solution:</strong> The input equation for stage \(i\) of a parallel load register is normally:
+              \(D_i = I_i \cdot Load + A_i \cdot Load'\).
+              To implement a synchronous clear, the clear signal must override both parallel load and hold operations, forcing \(D_i\) to 0 when \(Clear = 1\). The equation is modified as follows:
+              \[D_i = (I_i \cdot Load + A_i \cdot Load') \cdot Clear'\]
+              <strong>Logic Circuit Implementation:</strong> Connect the output of the standard load selector (AND-OR gates) to one input of a 2-input AND gate, and connect \(\overline{Clear}\) (the inverted clear signal) to the other input. The output of the AND gate feeds the \(D\) input of the D flip-flop.</p>
+          </div>
+
+          <div class="callout example">
+            <div class="callout-title">Problem 6-3: Serial vs Parallel Transfer</div>
+            <p><strong>Question:</strong> What is the difference between serial and parallel transfer? Explain how to convert serial data to parallel and parallel data to serial. What type of register is needed?</p>
+            <p><strong>Solution:</strong></p>
+            <ul>
+              <li><strong>Parallel Transfer:</strong> Transfers all bits of a binary word simultaneously over multiple lines. High speed, requires \(N\) data lines.</li>
+              <li><strong>Serial Transfer:</strong> Transfers bits sequentially, one-by-one, over a single line. Slow, requires only 1 data line.</li>
+              <li><strong>Serial-to-Parallel Conversion:</strong> Done using a <strong>SIPO (Serial-In Parallel-Out)</strong> shift register. Data is shifted in serially over \(N\) clock cycles. The outputs of the flip-flops are read simultaneously in parallel.</li>
+              <li><strong>Parallel-to-Serial Conversion:</strong> Done using a <strong>PISO (Parallel-In Serial-Out)</strong> shift register. Data is loaded into all flip-flops simultaneously in parallel. It is then shifted out on the serial line one bit at a time over \(N\) clock cycles.</li>
+            </ul>
+          </div>
+
+          <div class="callout example">
+            <div class="callout-title">Problem 6-4: Serial Shift Trace of 1101</div>
+            <p><strong>Question:</strong> The content of a 4-bit register is initially <code>1101</code>. The register is shifted six times to the right with the serial input being <code>101101</code>. What is the content of the register after each shift?</p>
+            <p><strong>Solution:</strong> The input stream <code>101101</code> is shifted in from right to left (first <code>1</code>, then <code>0</code>, then <code>1</code>, then <code>1</code>, then <code>0</code>, then <code>1</code>):</p>
+            <div class="table-wrap">
+              <table class="truth-table">
+                <thead>
+                  <tr><th>Shift Step</th><th>Serial Input Bit</th><th>Q<sub>3</sub></th><th>Q<sub>2</sub></th><th>Q<sub>1</sub></th><th>Q<sub>0</sub></th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>Initial State</td><td>—</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td><td class="one">1</td></tr>
+                  <tr><td>Shift 1</td><td>1</td><td class="one">1</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td></tr>
+                  <tr><td>Shift 2</td><td>0</td><td class="zero">0</td><td class="one">1</td><td class="one">1</td><td class="one">1</td></tr>
+                  <tr><td>Shift 3</td><td>1</td><td class="one">1</td><td class="zero">0</td><td class="one">1</td><td class="one">1</td></tr>
+                  <tr><td>Shift 4</td><td>1</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td><td class="one">1</td></tr>
+                  <tr><td>Shift 5</td><td>0</td><td class="zero">0</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td></tr>
+                  <tr><td>Shift 6</td><td>1</td><td class="one">1</td><td class="zero">0</td><td class="one">1</td><td class="one">1</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="callout example">
+            <div class="callout-title">Problem 6-13: BCD Ripple Counter Reset Logic</div>
+            <p><strong>Question:</strong> Show that a BCD ripple counter can be constructed using a 4-bit binary ripple counter with asynchronous clear and a NAND gate that detects the occurrence of count 1010.</p>
+            <p><strong>Solution:</strong> A BCD counter counts from 0 to 9 (<code>0000</code> to <code>1001</code>). When the count attempts to transition to 10 (<code>1010</code> in binary), the counter must be cleared immediately to 0000.
+              In a 4-bit register with outputs \(Q_3, Q_2, Q_1, Q_0\) (where \(Q_3\) is MSB):
+              The binary state for 10 is \(Q_3 Q_2 Q_1 Q_0 = 1010\).
+              The bits that are high at count 10 are \(Q_3\) and \(Q_1\).
+              <strong>Design:</strong> Connect inputs \(Q_3\) and \(Q_1\) to a 2-input NAND gate. Connect the output of this NAND gate to the active-low asynchronous Clear (\(\overline{CLR}\)) inputs of all four flip-flops.
+              As soon as the counter transitions from <code>1001</code> to <code>1010</code>, \(Q_3 = 1\) and \(Q_1 = 1\) are applied to the NAND gate, forcing its output to 0. This instantly resets all flip-flops to <code>0000</code>. The state <code>1010</code> is transient and lasts only a few nanoseconds, making <code>0000</code> the next stable state.</p>
+          </div>
+
+          <div class="callout example">
+            <div class="callout-title">Problem 6-14: Complemented Flip-Flops in Ripple Counter</div>
+            <p><strong>Question:</strong> How many flip-flops will be complemented in a 10-bit binary ripple counter to reach the next count after the following count: (a) 1001100111, (b) 0011111111, (c) 1111111111?</p>
+            <p><strong>Solution:</strong> In a binary ripple counter, a flip-flop toggles only if the preceding flip-flop transitions from 1 to 0 (for negative-edge trigger). This means the toggles ripple up from the LSB until they hit a flip-flop that is 0 (which transitions from 0 to 1, stopping the ripple). The number of flip-flops complemented is \(k+1\), where \(k\) is the number of consecutive 1s starting from the LSB.</p>
+            <ul>
+              <li><strong>(a) 1001100111:</strong> The LSBs are <code>111</code> (3 ones), followed by <code>0</code>. The next count is <code>1001101000</code>. Thus, <strong>4 flip-flops</strong> are complemented.</li>
+              <li><strong>(b) 0011111111:</strong> The LSBs are <code>11111111</code> (8 ones), followed by <code>0</code>. The next count is <code>0100000000</code>. Thus, <strong>9 flip-flops</strong> are complemented.</li>
+              <li><strong>(c) 1111111111:</strong> All 10 bits are 1. The next state wraps around to <code>0000000000</code>. Thus, <strong>all 10 flip-flops</strong> are complemented.</li>
+            </ul>
+          </div>
+
+          <div class="callout example">
+            <div class="callout-title">Problem 6-16: BCD Counter Unused States Analysis</div>
+            <p><strong>Question:</strong> The BCD ripple counter has four flip-flops and 16 states, of which only 10 are used. Analyze the circuit and determine the next state for each of the other six unused states. What will happen if a noise signal sends the circuit to one of the unused states?</p>
+            <p><strong>Solution:</strong> The unused states are 10, 11, 12, 13, 14, 15 (decimal).
+              If the counter uses the NAND-gate reset method (where NAND detects \(Q_3 Q_1 = 11\)):
+              - For states 10 (<code>1010</code>), 11 (<code>1011</code>), 14 (<code>1110</code>), and 15 (<code>1111</code>), both \(Q_3\) and \(Q_1\) are 1. The NAND gate output immediately goes low, clearing the counter to <code>0000</code>.
+              - For state 12 (<code>1100</code>), \(Q_3 Q_1 = 10\) (no reset). On the next clock pulse, LSB \(Q_0\) toggles to 1, leading to state 13 (<code>1101</code>).
+              - For state 13 (<code>1101</code>), \(Q_3 Q_1 = 10\). On the next clock pulse, \(Q_0\) transitions from 1 to 0, which triggers \(Q_1\) to toggle. The state becomes 14 (<code>1110</code>). In this state, \(Q_3 Q_1 = 11\), which triggers the NAND gate to reset the counter to <code>0000</code>.
+              <strong>Conclusion:</strong> If noise pushes the counter into an unused state, it will recover and return to the main BCD cycle (state <code>0000</code>) either immediately or within at most 2 clock pulses. The counter is self-correcting.</p>
+          </div>
+
+          <div class="callout example">
+            <div class="callout-title">Problem 6-18: Up-Down Counter Hold State Modification</div>
+            <p><strong>Question:</strong> What operation is performed in the up-down counter when both the up and down inputs are enabled? Modify the circuit so that when both inputs are equal to 1, the counter does not change state, but remains in the same count.</p>
+            <p><strong>Solution:</strong> In a standard up-down counter, if both inputs are active simultaneously (\(Up = Down = 1\)), the carry and borrow logic interfere, leading to invalid counts.
+              To ensure the counter holds its state when \(Up = Down = 1\), we must disable toggle inputs when both signals are high (or both are low). This can be achieved by gating the toggle logic with the XOR of Up and Down (\(Up \oplus Down\)):
+              \[T_i = (Up \cdot \text{Carry}_{i-1} + Down \cdot \text{Borrow}_{i-1}) \cdot (Up \oplus Down)\]
+              - When \(Up = Down = 1\), \(Up \oplus Down = 0\), forcing all \(T\) inputs to 0 (Hold state).
+              - When \(Up = Down = 0\), \(Up \oplus Down = 0\), forcing all \(T\) inputs to 0 (Hold state).
+              - When only one is active, \(Up \oplus Down = 1\), enabling normal counting.</p>
+          </div>
+        </div>
+      </details>
+    </div> <!-- END CH6 -->
+
+    <!-- =========================================================================
+         CHAPTER 7: MEMORY AND PROGRAMMABLE LOGIC
+         ========================================================================= -->
+    <div class="chapter-section" id="ch7">
+      <div class="chapter-title">
+        <span class="badge">CH 7</span>
+        <h2>Memory and Programmable Logic</h2>
+      </div>
+
+      <!-- 7.1 Random-Access Memory -->
+      <details id="ch7-ram" open>
+        <summary>
+          <span class="topic-icon">💾</span>
+          7.1 — Random-Access Memory (RAM) Architecture
+        </summary>
+        <div class="details-body">
+          <p>A memory unit stores binary information in groups of bits called words. Communication between memory and the CPU is achieved through data inputs/outputs, address lines, and control lines.</p>
+
+          <h3>Memory Sizing Calculations</h3>
+          <ul>
+            <li>\(k\) address lines specify a maximum of \(2^k\) distinct memory words.</li>
+            <li>\(n\) data lines specify the word size (number of bits per word).</li>
+            <li>Total storage capacity = \(2^k \times n\) bits.</li>
+            <li>Common multipliers: \(K = 2^{10}\) (1024), \(M = 2^{20}\) (1,048,576), \(G = 2^{30}\) (1,073,741,824).</li>
+          </ul>
+
+          <div class="callout theorem">
+            <div class="callout-title">Example calculation: 1K words of 16 bits each</div>
+            <p>1K words means \(2^{10} = 1024\) words. Each word consists of 16 bits (2 bytes).
+              Total Capacity = \(1024 \times 16 \text{ bits} = 16,384 \text{ bits}\).
+              In bytes: \((1024 \times 16) / 8 = 2048 \text{ bytes} = 2 \text{ KB}\).</p>
+          </div>
+
+          <h3>RAM Block Diagram Representation</h3>
+          <!-- SVG: RAM Block Diagram -->
+          <div class="svg-wrap">
+            <svg viewBox="0 0 350 200" width="350" height="200" xmlns="http://www.w3.org/2000/svg">
+              <text x="10" y="20" fill="var(--wire-cyan)" font-weight="bold">RAM Block Diagram</text>
+              <rect x="100" y="40" width="150" height="120" fill="var(--bg-card)" stroke="var(--gate-amber)" stroke-width="2.5" rx="6"/>
+              <text x="120" y="90" fill="#fff" font-weight="bold">RAM Memory Unit</text>
+              <text x="145" y="115" class="gate-label">2<sup>k</sup> x n</text>
+
+              <!-- Address Lines -->
+              <line x1="20" y1="60" x2="100" y2="60" class="wire"/>
+              <text x="10" y="55" class="input-label">k Address lines</text>
+
+              <!-- Controls -->
+              <line x1="20" y1="110" x2="100" y2="110" class="wire"/>
+              <text x="10" y="105" class="input-label">Read / Write</text>
+              
+              <line x1="20" y1="140" x2="100" y2="140" class="wire"/>
+              <text x="10" y="135" class="input-label">Enable (CS)</text>
+
+              <!-- Data Input (Top) -->
+              <line x1="175" y1="10" x2="175" y2="40" class="wire"/>
+              <text x="135" y="25" class="input-label">n Data Inputs</text>
+
+              <!-- Data Output (Bottom) -->
+              <line x1="175" y1="160" x2="175" y2="190" class="wire"/>
+              <text x="135" y="185" class="output-label">n Data Outputs</text>
+            </svg>
+          </div>
+
+          <h3>SRAM vs DRAM Comparison</h3>
+          <div class="table-wrap">
+            <table class="truth-table">
+              <thead>
+                <tr><th>Feature</th><th>Static RAM (SRAM)</th><th>Dynamic RAM (DRAM)</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Storage Cell</td><td>6-transistor latch circuit (cross-coupled inverters)</td><td>1-transistor & 1-capacitor charge cell</td></tr>
+                <tr><td>Volatility</td><td>Volatile (requires constant power to hold state)</td><td>Volatile (requires power and periodic refreshing)</td></tr>
+                <tr><td>Refresh Needed</td><td>No</td><td>Yes (capacitor charge leaks over time, refresh every few ms)</td></tr>
+                <tr><td>Speed</td><td>Extremely fast (used as Cache memory)</td><td>Slower (used as Main memory)</td></tr>
+                <tr><td>Density / Cost</td><td>Low density, high cost per bit</td><td>High density, low cost per bit</td></tr>
+                <tr><td>Power Consumption</td><td>High</td><td>Low</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </details>
+
+      <!-- 7.2 Read-Only Memory -->
+      <details id="ch7-rom">
+        <summary>
+          <span class="topic-icon">💿</span>
+          7.2 — Read-Only Memory (ROM) Architecture
+        </summary>
+        <div class="details-body">
+          <p>Read-Only Memory (ROM) is a non-volatile programmable logic device (PLD) that performs only the read operation. Internally, a ROM of \(2^k \times n\) size consists of a \(k \times 2^k\) decoder and \(n\) output OR gates.</p>
+
+          <h3>Array Logic Symbology</h3>
+          <p>To draw complex programmable arrays concisely, a single line is drawn at the gate input. Multiple orthogonal lines intersect it, where an <code>x</code> represents a connected programmable fuse, and no mark represents an open circuit.</p>
+
+          <h3>8 x 4 ROM Gate-Level Schematic</h3>
+          <p>The following circuit shows an 8x4 ROM programmed with the address/data table from slide 14. Active connections (<code>x</code>) are placed at the intersections matching the data table:</p>
+
+          <!-- SVG: 8x4 ROM Gate-Level Schematic -->
+          <div class="svg-wrap">
+            <svg viewBox="0 0 420 300" width="420" height="300" xmlns="http://www.w3.org/2000/svg">
+              <text x="10" y="20" fill="var(--wire-cyan)" font-weight="bold">8 x 4 Programmable ROM Array</text>
+              <!-- Decoder -->
+              <rect x="50" y="40" width="80" height="230" fill="var(--bg-card)" stroke="var(--gate-amber)" stroke-width="2" rx="4"/>
+              <text x="70" y="140" fill="#fff" font-weight="bold">3 x 8</text>
+              <text x="65" y="160" fill="#fff" font-weight="bold">Decoder</text>
+
+              <line x1="10" y1="80" x2="50" y2="80" class="wire"/><text x="15" y="75" class="input-label">A<sub>2</sub></text>
+              <line x1="10" y1="150" x2="50" y2="150" class="wire"/><text x="15" y="145" class="input-label">A<sub>1</sub></text>
+              <line x1="10" y1="220" x2="50" y2="220" class="wire"/><text x="15" y="215" class="input-label">A<sub>0</sub></text>
+
+              <!-- 8 Wordlines -->
+              <line x1="130" y1="60" x2="350" y2="60" class="wire"/><text x="140" y="55" font-size="9px">0</text>
+              <line x1="130" y1="85" x2="350" y2="85" class="wire"/><text x="140" y="80" font-size="9px">1</text>
+              <line x1="130" y1="110" x2="350" y2="110" class="wire"/><text x="140" y="105" font-size="9px">2</text>
+              <line x1="130" y1="135" x2="350" y2="135" class="wire"/><text x="140" y="130" font-size="9px">3</text>
+              <line x1="130" y1="160" x2="350" y2="160" class="wire"/><text x="140" y="155" font-size="9px">4</text>
+              <line x1="130" y1="185" x2="350" y2="185" class="wire"/><text x="140" y="180" font-size="9px">5</text>
+              <line x1="130" y1="210" x2="350" y2="210" class="wire"/><text x="140" y="205" font-size="9px">6</text>
+              <line x1="130" y1="235" x2="350" y2="235" class="wire"/><text x="140" y="230" font-size="9px">7</text>
+
+              <!-- 4 Bitlines (OR inputs) -->
+              <line x1="200" y1="50" x2="200" y2="250" class="wire"/>
+              <line x1="240" y1="50" x2="240" y2="250" class="wire"/>
+              <line x1="280" y1="50" x2="280" y2="250" class="wire"/>
+              <line x1="320" y1="50" x2="320" y2="250" class="wire"/>
+
+              <!-- Connection Crosses (x) matching table:
+                   0: 0000 -> no connections
+                   1: 1101 -> crosses at D3, D2, D0
+                   2: 0011 -> crosses at D1, D0
+                   3: 1000 -> crosses at D3
+                   4: 1111 -> crosses at D3, D2, D1, D0
+                   5: 1001 -> crosses at D3, D0
+                   6: 0111 -> crosses at D2, D1, D0
+                   7: 0000 -> no connections
+              -->
+              <!-- Address 1 (y=85) connections -->
+              <text x="195" y="90" fill="var(--accent-pink)" font-weight="bold" font-size="12px">x</text>
+              <text x="235" y="90" fill="var(--accent-pink)" font-weight="bold" font-size="12px">x</text>
+              <text x="315" y="90" fill="var(--accent-pink)" font-weight="bold" font-size="12px">x</text>
+              <!-- Address 2 (y=110) connections -->
+              <text x="275" y="115" fill="var(--accent-pink)" font-weight="bold" font-size="12px">x</text>
+              <text x="315" y="115" fill="var(--accent-pink)" font-weight="bold" font-size="12px">x</text>
+              <!-- Address 3 (y=135) connections -->
+              <text x="195" y="140" fill="var(--accent-pink)" font-weight="bold" font-size="12px">x</text>
+              <!-- Address 4 (y=160) connections -->
+              <text x="195" y="165" fill="var(--accent-pink)" font-weight="bold" font-size="12px">x</text>
+              <text x="235" y="165" fill="var(--accent-pink)" font-weight="bold" font-size="12px">x</text>
+              <text x="275" y="165" fill="var(--accent-pink)" font-weight="bold" font-size="12px">x</text>
+              <text x="315" y="165" fill="var(--accent-pink)" font-weight="bold" font-size="12px">x</text>
+              <!-- Address 5 (y=185) connections -->
+              <text x="195" y="190" fill="var(--accent-pink)" font-weight="bold" font-size="12px">x</text>
+              <text x="315" y="190" fill="var(--accent-pink)" font-weight="bold" font-size="12px">x</text>
+              <!-- Address 6 (y=210) connections -->
+              <text x="235" y="215" fill="var(--accent-pink)" font-weight="bold" font-size="12px">x</text>
+              <text x="275" y="215" fill="var(--accent-pink)" font-weight="bold" font-size="12px">x</text>
+              <text x="315" y="215" fill="var(--accent-pink)" font-weight="bold" font-size="12px">x</text>
+
+              <!-- OR gates -->
+              <path d="M185,250 Q200,270 185,290 L205,290 Q225,290 225,270 Q225,250 205,250 Z" class="gate-body" style="stroke: var(--wire-green)"/>
+              <text x="180" y="295" class="output-label">D<sub>3</sub></text>
+              
+              <path d="M225,250 Q240,270 225,290 L245,290 Q265,290 265,270 Q265,250 245,250 Z" class="gate-body" style="stroke: var(--wire-green)"/>
+              <text x="220" y="295" class="output-label">D<sub>2</sub></text>
+
+              <path d="M265,250 Q280,270 265,290 L285,290 Q305,290 305,270 Q305,250 285,250 Z" class="gate-body" style="stroke: var(--wire-green)"/>
+              <text x="260" y="295" class="output-label">D<sub>1</sub></text>
+
+              <path d="M305,250 Q320,270 305,290 L325,290 Q345,290 345,270 Q345,250 325,250 Z" class="gate-body" style="stroke: var(--wire-green)"/>
+              <text x="300" y="295" class="output-label">D<sub>0</sub></text>
+            </svg>
+          </div>
+        </div>
+      </details>
+
+      <!-- 7.3 PLAs, PALs, and FPGAs -->
+      <details id="ch7-pld">
+        <summary>
+          <span class="topic-icon">🧬</span>
+          7.3 — PLAs, PALs, and FPGAs
+        </summary>
+        <div class="details-body">
+          <p>Programmable Logic Devices (PLDs) differ in which of their internal logic gates (AND or OR) are programmable:</p>
+          <ul>
+            <li><strong>ROM:</strong> Fixed AND array (decoder) + Programmable OR array.</li>
+            <li><strong>PLA (Programmable Logic Array):</strong> Programmable AND array + Programmable OR array. Highly flexible but slower.</li>
+            <li><strong>PAL (Programmable Array Logic):</strong> Programmable AND array + Fixed OR array. Faster and easier to manufacture.</li>
+            <li><strong>FPGA (Field-Programmable Gate Array):</strong> Matrix of Configurable Logic Blocks (CLBs) surrounded by programmable routing channels. LUTs (Look-Up Tables) are programmed to implement combinational functions.</li>
+          </ul>
+
+          <h3>PLD Architecture Matrix Comparison</h3>
+          <div class="table-wrap">
+            <table class="truth-table">
+              <thead>
+                <tr><th>Device Type</th><th>AND Array</th><th>OR Array</th><th>Flexibility</th><th>Design Complexity</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><strong>ROM</strong></td><td>Fixed</td><td>Programmable</td><td>Medium</td><td>Low</td></tr>
+                <tr><td><strong>PLA</strong></td><td>Programmable</td><td>Programmable</td><td>High</td><td>High</td></tr>
+                <tr><td><strong>PAL</strong></td><td>Programmable</td><td>Fixed</td><td>Medium-Low</td><td>Medium</td></tr>
+                <tr><td><strong>FPGA</strong></td><td>Programmable (LUT)</td><td>Programmable (LUT)</td><td>Extremely High</td><td>Very High</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3>FPGA Architecture Structure Block</h3>
+          <p>FPGAs consist of a grid of Configurable Logic Blocks (CLBs) and programmable routing switches. The logic functions are programmed into Look-Up Tables (LUTs) made of SRAM cells:</p>
+
+          <!-- SVG: FPGA Layout and CLB block -->
+          <div class="svg-wrap">
+            <svg viewBox="0 0 480 220" width="480" height="220" xmlns="http://www.w3.org/2000/svg">
+              <text x="10" y="20" fill="var(--wire-cyan)" font-weight="bold">FPGA Fabric Grid & Configurable Logic Block (CLB)</text>
+              
+              <!-- CLB Grid -->
+              <!-- Row 1 -->
+              <rect x="30" y="40" width="40" height="40" fill="var(--bg-card)" stroke="var(--gate-amber)" stroke-width="2" rx="3"/>
+              <text x="40" y="65" font-size="10px" font-weight="bold">CLB</text>
+              <rect x="95" y="40" width="40" height="40" fill="var(--bg-card)" stroke="var(--gate-amber)" stroke-width="2" rx="3"/>
+              <text x="105" y="65" font-size="10px" font-weight="bold">CLB</text>
+              <rect x="160" y="40" width="40" height="40" fill="var(--bg-card)" stroke="var(--gate-amber)" stroke-width="2" rx="3"/>
+              <text x="170" y="65" font-size="10px" font-weight="bold">CLB</text>
+
+              <!-- Row 2 -->
+              <rect x="30" y="105" width="40" height="40" fill="var(--bg-card)" stroke="var(--gate-amber)" stroke-width="2" rx="3"/>
+              <text x="40" y="130" font-size="10px" font-weight="bold">CLB</text>
+              <rect x="95" y="105" width="40" height="40" fill="var(--bg-card)" stroke="var(--gate-amber)" stroke-width="2" rx="3"/>
+              <text x="105" y="130" font-size="10px" font-weight="bold">CLB</text>
+              <rect x="160" y="105" width="40" height="40" fill="var(--bg-card)" stroke="var(--gate-amber)" stroke-width="2" rx="3"/>
+              <text x="170" y="130" font-size="10px" font-weight="bold">CLB</text>
+
+              <!-- Routing Channels (dashed lines) -->
+              <line x1="20" y1="92" x2="215" y2="92" stroke="var(--wire-cyan)" stroke-dasharray="2,2" stroke-width="2"/>
+              <line x1="20" y1="155" x2="215" y2="155" stroke="var(--wire-cyan)" stroke-dasharray="2,2" stroke-width="2"/>
+              
+              <line x1="82" y1="30" x2="82" y2="165" stroke="var(--wire-cyan)" stroke-dasharray="2,2" stroke-width="2"/>
+              <line x1="148" y1="30" x2="148" y2="165" stroke="var(--wire-cyan)" stroke-dasharray="2,2" stroke-width="2"/>
+
+              <text x="35" y="185" fill="var(--text-muted)" font-size="11px">Routing Channels</text>
+
+              <!-- Detailed CLB Block (Zoomed In) -->
+              <line x1="220" y1="92" x2="245" y2="92" stroke="var(--wire-green)" stroke-width="2" stroke-dasharray="4,4"/>
+              
+              <rect x="250" y="30" width="200" height="150" fill="var(--bg-card)" stroke="var(--wire-green)" stroke-width="2.5" rx="6"/>
+              <text x="315" y="48" fill="var(--wire-green)" font-weight="bold">CLB Detail</text>
+
+              <!-- Look-Up Table (LUT) -->
+              <rect x="265" y="65" width="70" height="50" fill="var(--bg-void)" stroke="var(--gate-amber)" stroke-width="2"/>
+              <text x="275" y="95" fill="var(--gate-amber)" font-weight="bold">LUT (SRAM)</text>
+
+              <!-- D Flip-Flop -->
+              <rect x="365" y="65" width="60" height="50" fill="var(--bg-void)" stroke="var(--accent-purple)" stroke-width="2"/>
+              <text x="380" y="95" fill="var(--accent-purple)" font-weight="bold">D-FF</text>
+              <polygon points="365,100 375,105 365,110" fill="none" stroke="var(--accent-purple)" stroke-width="1.5"/>
+
+              <!-- Signals inside CLB -->
+              <line x1="335" y1="90" x2="365" y2="90" class="wire"/>
+              <line x1="425" y1="90" x2="445" y2="90" class="wire" stroke="var(--wire-green)"/>
+              <text x="430" y="80" class="output-label">OUT</text>
+
+              <line x1="255" y1="90" x2="265" y2="90" class="wire"/>
+              <text x="255" y="82" class="input-label">IN</text>
+            </svg>
+          </div>
+        </div>
+      </details>
+
+      <!-- 7.4 ROM design example -->
+      <details id="ch7-exercises">
+        <summary>
+          <span class="topic-icon">📝</span>
+          7.4 — Chapter 7 Exercise Solution (ROM Circuit Implementation)
+        </summary>
+        <div class="details-body">
+          <div class="callout theorem">
+            <div class="callout-title">ROM Implementation Problem (Slide 15-16)</div>
+            <p><strong>Problem Statement:</strong> Implement a ROM-based circuit for the following logic functions:
+              - \(f(a,b,c) = a'b' + abc\)
+              - \(g(a,b,c) = a'b'c' + ab + bc\)
+              - \(h(a,b,c) = a'b' + c\)</p>
+            
+            <p><strong>Step 1: Express functions in Sum of Minterms (\(\Sigma m()\)) format using expansion:</strong></p>
+            <ul>
+              <li>\(f(a,b,c) = a'b'(c + c') + abc = a'b'c' + a'b'c + abc = m_0 + m_1 + m_7 = \mathbf{\Sigma m(0, 1, 7)}\)</li>
+              <li>\(g(a,b,c) = a'b'c' + ab(c+c') + (a+a')bc = a'b'c' + abc + abc' + abc + a'bc = m_0 + m_7 + m_6 + m_3 = \mathbf{\Sigma m(0, 3, 6, 7)}\)</li>
+              <li>\(h(a,b,c) = a'b'(c+c') + (a+a')(b+b')c = m_0 + m_1 + m_7 + m_5 + m_3 = \mathbf{\Sigma m(0, 1, 3, 5, 7)}\)</li>
+            </ul>
+
+            <p><strong>Step 2: Program the 8x3 ROM</strong></p>
+            <p>Since we have 3 inputs (\(a, b, c\)) and 3 outputs (\(f, g, h\)), we require an \(8 \times 3\) ROM unit (consisting of a 3-to-8 decoder and 3 OR output gates):</p>
+          </div>
+
+          <h3>ROM Programming Truth Table</h3>
+          <div class="table-wrap">
+            <table class="truth-table">
+              <thead>
+                <tr>
+                  <th colspan="3">Inputs (Address)</th>
+                  <th>Decoder Output</th>
+                  <th colspan="3">Outputs (Data)</th>
+                </tr>
+                <tr>
+                  <th>a</th><th>b</th><th>c</th>
+                  <th>Minterm Line</th>
+                  <th>f</th><th>g</th><th>h</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>0</td><td>0</td><td>0</td><td>0</td><td class="one">1</td><td class="one">1</td><td class="one">1</td></tr>
+                <tr><td>0</td><td>0</td><td>1</td><td>1</td><td class="one">1</td><td class="zero">0</td><td class="one">1</td></tr>
+                <tr><td>0</td><td>1</td><td>0</td><td>2</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td></tr>
+                <tr><td>0</td><td>1</td><td>1</td><td>3</td><td class="zero">0</td><td class="one">1</td><td class="one">1</td></tr>
+                <tr><td>1</td><td>0</td><td>0</td><td>4</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td></tr>
+                <tr><td>1</td><td>0</td><td>1</td><td>5</td><td class="zero">0</td><td class="zero">0</td><td class="one">1</td></tr>
+                <tr><td>1</td><td>1</td><td>0</td><td>6</td><td class="zero">0</td><td class="one">1</td><td class="zero">0</td></tr>
+                <tr><td>1</td><td>1</td><td>1</td><td>7</td><td class="one">1</td><td class="one">1</td><td class="one">1</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3>ROM Implementation Circuit Diagram</h3>
+          <!-- SVG: ROM Circuit implementation -->
+          <div class="svg-wrap">
+            <svg viewBox="0 0 420 280" width="420" height="280" xmlns="http://www.w3.org/2000/svg">
+              <!-- 3-to-8 Decoder -->
+              <rect x="50" y="40" width="80" height="210" fill="var(--bg-card)" stroke="var(--gate-amber)" stroke-width="2" rx="4"/>
+              <text x="65" y="130" fill="#fff" font-weight="bold">3-to-8</text>
+              <text x="60" y="150" fill="#fff" font-weight="bold">Decoder</text>
+
+              <line x1="15" y1="80" x2="50" y2="80" class="wire"/><text x="15" y="75" class="input-label">a</text>
+              <line x1="15" y1="140" x2="50" y2="140" class="wire"/><text x="15" y="135" class="input-label">b</text>
+              <line x1="15" y1="200" x2="50" y2="200" class="wire"/><text x="15" y="195" class="input-label">c</text>
+
+              <!-- Wordlines -->
+              <line x1="130" y1="60" x2="350" y2="60" class="wire"/><text x="140" y="55" font-size="9px">0</text>
+              <line x1="130" y1="85" x2="350" y2="85" class="wire"/><text x="140" y="80" font-size="9px">1</text>
+              <line x1="130" y1="110" x2="350" y2="110" class="wire"/><text x="140" y="105" font-size="9px">2</text>
+              <line x1="130" y1="135" x2="350" y2="135" class="wire"/><text x="140" y="130" font-size="9px">3</text>
+              <line x1="130" y1="160" x2="350" y2="160" class="wire"/><text x="140" y="155" font-size="9px">4</text>
+              <line x1="130" y1="185" x2="350" y2="185" class="wire"/><text x="140" y="180" font-size="9px">5</text>
+              <line x1="130" y1="210" x2="350" y2="210" class="wire"/><text x="140" y="205" font-size="9px">6</text>
+              <line x1="130" y1="235" x2="350" y2="235" class="wire"/><text x="140" y="230" font-size="9px">7</text>
+
+              <!-- Output channels for f, g, h -->
+              <line x1="210" y1="50" x2="210" y2="238" class="wire"/>
+              <line x1="270" y1="50" x2="270" y2="238" class="wire"/>
+              <line x1="330" y1="50" x2="330" y2="238" class="wire"/>
+
+              <!-- Connection Crosses (x)
+                   f: 0, 1, 7
+                   g: 0, 3, 6, 7
+                   h: 0, 1, 3, 5, 7
+              -->
+              <!-- Line 0 crosses -->
+              <text x="205" y="65" fill="var(--accent-pink)" font-weight="bold" font-size="12px">x</text>
+              <text x="265" y="65" fill="var(--accent-pink)" font-weight="bold" font-size="12px">x</text>
+              <text x="325" y="65" fill="var(--accent-pink)" font-weight="bold" font-size="12px">x</text>
+              <!-- Line 1 crosses -->
+              <text x="205" y="90" fill="var(--accent-pink)" font-weight="bold" font-size="12px">x</text>
+              <text x="325" y="90" fill="var(--accent-pink)" font-weight="bold" font-size="12px">x</text>
+              <!-- Line 3 crosses -->
+              <text x="265" y="140" fill="var(--accent-pink)" font-weight="bold" font-size="12px">x</text>
+              <text x="325" y="140" fill="var(--accent-pink)" font-weight="bold" font-size="12px">x</text>
+              <!-- Line 5 crosses -->
+              <text x="325" y="190" fill="var(--accent-pink)" font-weight="bold" font-size="12px">x</text>
+              <!-- Line 6 crosses -->
+              <text x="265" y="215" fill="var(--accent-pink)" font-weight="bold" font-size="12px">x</text>
+              <!-- Line 7 crosses -->
+              <text x="205" y="240" fill="var(--accent-pink)" font-weight="bold" font-size="12px">x</text>
+              <text x="265" y="240" fill="var(--accent-pink)" font-weight="bold" font-size="12px">x</text>
+              <text x="325" y="240" fill="var(--accent-pink)" font-weight="bold" font-size="12px">x</text>
+
+              <!-- Output OR gates -->
+              <path d="M195,238 Q210,258 195,278 L215,278 Q235,278 235,258 Q235,238 215,238 Z" class="gate-body" style="stroke: var(--wire-green)"/>
+              <text x="210" y="275" class="output-label">f</text>
+
+              <path d="M255,238 Q270,258 255,278 L275,278 Q295,278 295,258 Q295,238 275,238 Z" class="gate-body" style="stroke: var(--wire-green)"/>
+              <text x="270" y="275" class="output-label">g</text>
+
+              <path d="M315,238 Q330,258 315,278 L335,278 Q355,278 355,258 Q355,238 335,238 Z" class="gate-body" style="stroke: var(--wire-green)"/>
+              <text x="330" y="275" class="output-label">h</text>
+            </svg>
+          </div>
+        </div>
+      </details>
+    </div> <!-- END CH7 -->
+
+    <!-- FOOTER SECTION (FINAL CLOSING FOOTER FOR THE COMPLETE APPLICATION) -->
+    <footer style="padding: 50px; border-top: 1px solid var(--border); text-align: center; margin-top: 50px; background: linear-gradient(180deg, var(--bg-card) 0%, #04060b 100%)">
+      <p style="color: var(--wire-cyan); font-weight: bold; font-size: 15px; margin-bottom: 8px">
+        CSE 210: Digital Logic Design — Interactive Study Guide
       </p>
-      <p style="color: var(--text-dim); font-size: 12px; margin-top: 8px">
-        Provide instructions to proceed to the next chapters (Chapters 4–7).
+      <p style="color: var(--text-muted); font-size: 13px; max-width: 600px; margin: 0 auto 16px">
+        A premium self-contained offline learning platform detailing systems, algebraic minimization, combinational systems, registers, and memory architectures.
       </p>
-    </div>
+      <p style="color: var(--text-dim); font-size: 11px; font-family: var(--font-mono)">
+        Developed for Imam Abdulrahman Bin Faisal University © 2026. Fully LTR English Compliant.
+      </p>
+    </footer>
+
+  </main>
+
+</body>
+</html>
